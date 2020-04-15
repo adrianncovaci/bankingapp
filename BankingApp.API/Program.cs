@@ -22,5 +22,19 @@ namespace BankingApp.API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        /*
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .ConfigureAppConfiguration("appSettings.json", true)
+                .ConfigureLogging(logging =>
+                                logging.AddConsole()
+                                .AddDebug())
+                .UseIISIntegration()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>()
+                .Build();
+        */
+
     }
 }

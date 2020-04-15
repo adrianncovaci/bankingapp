@@ -1,0 +1,393 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace BankingApp.API.Migrations
+{
+    public partial class InitialMigration : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "AccountStatuses",
+                columns: table => new
+                {
+                    AccountStatusId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountStatuses", x => x.AccountStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccountTypes",
+                columns: table => new
+                {
+                    AccountTypeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountTypes", x => x.AccountTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(nullable: true),
+                    NormalizedUserName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    NormalizedEmail = table.Column<string>(nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    CNP = table.Column<string>(maxLength: 13, nullable: true),
+                    FirstName = table.Column<string>(maxLength: 32, nullable: false),
+                    LastName = table.Column<string>(maxLength: 32, nullable: false),
+                    CreditScore = table.Column<short>(nullable: false, defaultValue: (short)540),
+                    City = table.Column<string>(maxLength: 64, nullable: false),
+                    Address = table.Column<string>(maxLength: 128, nullable: false),
+                    ZipCode = table.Column<string>(maxLength: 6, nullable: false),
+                    RegisteredDate = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 15, 16, 58, 4, 781, DateTimeKind.Local).AddTicks(3465))
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoanOfficers",
+                columns: table => new
+                {
+                    LoanOfficerId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(maxLength: 32, nullable: false),
+                    LastName = table.Column<string>(maxLength: 32, nullable: false),
+                    DateHired = table.Column<DateTime>(nullable: false),
+                    EmailAddress = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoanOfficers", x => x.LoanOfficerId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoanRequestStatuses",
+                columns: table => new
+                {
+                    LoanRequestStatusId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoanRequestStatuses", x => x.LoanRequestStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoanTypes",
+                columns: table => new
+                {
+                    LoanTypeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Type = table.Column<string>(maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoanTypes", x => x.LoanTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    AccountId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountNumber = table.Column<string>(maxLength: 13, nullable: false),
+                    Balance = table.Column<decimal>(nullable: false),
+                    MaintenanceFee = table.Column<decimal>(nullable: false),
+                    InterestRate = table.Column<decimal>(nullable: false),
+                    InitialDeposit = table.Column<decimal>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 15, 16, 58, 4, 762, DateTimeKind.Local).AddTicks(9512)),
+                    LastDeposit = table.Column<DateTime>(nullable: true),
+                    Period = table.Column<int>(nullable: true),
+                    AccountStatusId = table.Column<int>(nullable: false),
+                    AccountTypeId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.AccountId);
+                    table.ForeignKey(
+                        name: "FK_Accounts_AccountStatuses_AccountStatusId",
+                        column: x => x.AccountStatusId,
+                        principalTable: "AccountStatuses",
+                        principalColumn: "AccountStatusId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Accounts_AccountTypes_AccountTypeId",
+                        column: x => x.AccountTypeId,
+                        principalTable: "AccountTypes",
+                        principalColumn: "AccountTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Loans",
+                columns: table => new
+                {
+                    LoanId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InterestRate = table.Column<decimal>(nullable: false),
+                    Period = table.Column<int>(nullable: false),
+                    LoanTypeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Loans", x => x.LoanId);
+                    table.ForeignKey(
+                        name: "FK_Loans_LoanTypes_LoanTypeId",
+                        column: x => x.LoanTypeId,
+                        principalTable: "LoanTypes",
+                        principalColumn: "LoanTypeId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
+                columns: table => new
+                {
+                    TransactionId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DateIssued = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 15, 16, 58, 4, 796, DateTimeKind.Local).AddTicks(9861)),
+                    Amount = table.Column<decimal>(nullable: false),
+                    SenderAccountId = table.Column<int>(nullable: false),
+                    ReceiverAccountId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.TransactionId);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Accounts_ReceiverAccountId",
+                        column: x => x.ReceiverAccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Transactions_Accounts_SenderAccountId",
+                        column: x => x.SenderAccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LoanRequests",
+                columns: table => new
+                {
+                    LoanRequestId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DateIssued = table.Column<DateTime>(nullable: false),
+                    Comments = table.Column<string>(nullable: true),
+                    ResponseDate = table.Column<DateTime>(nullable: true),
+                    LoanRequestStatusId = table.Column<int>(nullable: false),
+                    LoanOfficerId = table.Column<int>(nullable: false),
+                    AccountId = table.Column<int>(nullable: false),
+                    LoanId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoanRequests", x => x.LoanRequestId);
+                    table.ForeignKey(
+                        name: "FK_LoanRequests_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LoanRequests_Loans_LoanId",
+                        column: x => x.LoanId,
+                        principalTable: "Loans",
+                        principalColumn: "LoanId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LoanRequests_LoanOfficers_LoanOfficerId",
+                        column: x => x.LoanOfficerId,
+                        principalTable: "LoanOfficers",
+                        principalColumn: "LoanOfficerId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_LoanRequests_LoanRequestStatuses_LoanRequestStatusId",
+                        column: x => x.LoanRequestStatusId,
+                        principalTable: "LoanRequestStatuses",
+                        principalColumn: "LoanRequestStatusId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AccountStatuses",
+                columns: new[] { "AccountStatusId", "Status" },
+                values: new object[,]
+                {
+                    { 1, "Active" },
+                    { 2, "Frozen" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AccountTypes",
+                columns: new[] { "AccountTypeId", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Savings" },
+                    { 2, "Checkings" },
+                    { 3, "Retirement" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LoanRequestStatuses",
+                columns: new[] { "LoanRequestStatusId", "Status" },
+                values: new object[,]
+                {
+                    { 1, "Pending" },
+                    { 2, "Accepted" },
+                    { 3, "Declined" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_AccountNumber",
+                table: "Accounts",
+                column: "AccountNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_AccountStatusId",
+                table: "Accounts",
+                column: "AccountStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_AccountTypeId",
+                table: "Accounts",
+                column: "AccountTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_CustomerId",
+                table: "Accounts",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_CNP",
+                table: "Customers",
+                column: "CNP",
+                unique: true,
+                filter: "[CNP] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_Email",
+                table: "Customers",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanOfficers_EmailAddress",
+                table: "LoanOfficers",
+                column: "EmailAddress",
+                unique: true,
+                filter: "[EmailAddress] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanOfficers_PhoneNumber",
+                table: "LoanOfficers",
+                column: "PhoneNumber",
+                unique: true,
+                filter: "[PhoneNumber] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanRequests_AccountId",
+                table: "LoanRequests",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanRequests_LoanId",
+                table: "LoanRequests",
+                column: "LoanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanRequests_LoanOfficerId",
+                table: "LoanRequests",
+                column: "LoanOfficerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoanRequests_LoanRequestStatusId",
+                table: "LoanRequests",
+                column: "LoanRequestStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Loans_LoanTypeId",
+                table: "Loans",
+                column: "LoanTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_ReceiverAccountId",
+                table: "Transactions",
+                column: "ReceiverAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_SenderAccountId",
+                table: "Transactions",
+                column: "SenderAccountId");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "LoanRequests");
+
+            migrationBuilder.DropTable(
+                name: "Transactions");
+
+            migrationBuilder.DropTable(
+                name: "Loans");
+
+            migrationBuilder.DropTable(
+                name: "LoanOfficers");
+
+            migrationBuilder.DropTable(
+                name: "LoanRequestStatuses");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "LoanTypes");
+
+            migrationBuilder.DropTable(
+                name: "AccountStatuses");
+
+            migrationBuilder.DropTable(
+                name: "AccountTypes");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
+        }
+    }
+}
