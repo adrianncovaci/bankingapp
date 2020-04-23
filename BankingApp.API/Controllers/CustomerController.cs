@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 
 using BankingApp.API.Helpers;
-using BankingApp.API.Models;
+using BankingApp.API.Models.Customer;
 using BankingApp.Domain.Entities;
 using BankingApp.Domain.EFMapping;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +27,16 @@ namespace BankingApp.API.Controllers {
         private UserManager<Customer> _customerManager;
         private IMapper _mapper;
         private readonly BankContext _context;
+        private readonly SignInManager<Customer> _signInManager;
 
         public CustomerController(BankContext context, IMapper mapper,
-                                  IOptions<AppSettings> appSettings, UserManager<Customer> manager) {
+                                  IOptions<AppSettings> appSettings, UserManager<Customer> manager,
+                                  SignInManager<Customer> signInManager) {
             _mapper = mapper;
             _settings = appSettings.Value;
             _context = context;
             _customerManager = manager;
+            _signInManager = signInManager;
         }
 
         [AllowAnonymousAttribute]
@@ -44,20 +47,23 @@ namespace BankingApp.API.Controllers {
             if (customer == null || !await _customerManager.CheckPasswordAsync(customer, model.Password))
                 return BadRequest(new { message = "Incorrect email and/or password" });
 
-            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_settings.Secret);
+            var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor {
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Subject = new ClaimsIdentity(new Claim[] {
-                        new Claim(ClaimTypes.Name, customer.Id.ToString())
+                        new Claim(ClaimTypes.Name, customer.Id.ToString()),
+                        new Claim("RegisteredDate", customer.RegisteredDate.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
+            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(customer);
+            var claims = claimsPrincipal.Claims.ToList();
 
             return Ok( new {
-                    Token = tokenString
+                    Token = tokenString,
                 } );
         }
 

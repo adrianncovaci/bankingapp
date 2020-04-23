@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BankingApp.Domain.EFMapping;
 using BankingApp.API.Helpers;
 using BankingApp.Domain.Entities;
-using BankingApp.API.Models;
+using BankingApp.API.Models.Customer;
 
 using Microsoft.EntityFrameworkCore;
 

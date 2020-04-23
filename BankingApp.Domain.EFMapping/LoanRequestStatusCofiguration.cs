@@ -6,9 +6,9 @@ namespace BankingApp.Domain.EFMapping {
     public class LoanRequestStatusConfiguration: IEntityTypeConfiguration<LoanRequestStatus> {
         public void Configure(EntityTypeBuilder<LoanRequestStatus> builder) {
             builder.HasData(
-                            new LoanRequestStatus() { LoanRequestStatusId = 1, Status = "Pending"},
-                            new LoanRequestStatus() { LoanRequestStatusId = 2, Status = "Accepted" },
-                            new LoanRequestStatus() { LoanRequestStatusId = 3, Status = "Declined" }
+                            new LoanRequestStatus() { Id = 1, Status = "Pending"},
+                            new LoanRequestStatus() { Id = 2, Status = "Accepted" },
+                            new LoanRequestStatus() { Id = 3, Status = "Declined" }
                             );
         }
     }

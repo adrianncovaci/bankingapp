@@ -1,6 +1,6 @@
 using AutoMapper;
 using BankingApp.Domain.Entities;
-using BankingApp.API.Models;
+using BankingApp.API.Models.Customer;
 
 namespace BankingApp.API.Helpers {
     public class AutoMapperProfile: Profile {

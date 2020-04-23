@@ -1,0 +1,13 @@
+<mat-toolbar color="primary" mat-elevation-z8>
+    <a routerLink="/">
+        <mat-icon>account_balance_wallet</mat-icon>
+    </a>
+
+    <div class = "spacer">
+    </div>
+
+    <a mat-button>Services</a>
+    <a mat-button>Info</a>
+    <a *ngIf="!isLoggedIn()" routerLink = "/login" mat-button color="link">Sign Up</a>
+    <a *ngIf="isLoggedIn()" mat-button color="link" (click)="logOut()">Log Out</a>
+</mat-toolbar>

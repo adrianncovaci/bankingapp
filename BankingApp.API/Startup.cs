@@ -17,11 +17,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using Microsoft.OpenApi.Models;
 
-using BankingApp.Domain.EFMapping;
 using BankingApp.API.Helpers;
-using BankingApp.API.Models;
 using BankingApp.Domain.Entities;
+using BankingApp.API.Repositories;
+using BankingApp.API.Repositories.Interfaces;
+using BankingApp.API.Infrastructure.Middleware;
+using Swashbuckle.AspNetCore.Swagger;
+// using Swashbuckle.Swagger;
 
 namespace BankingApp.API
 {
@@ -38,15 +42,27 @@ namespace BankingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BankContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentityCore<Customer>(options => {
-                    options.Password.RequiredLength = 7;
+
+            services.AddIdentity<Customer, Role>(options => {
+                    options.Password.RequiredLength = 6;
                     options.Password.RequireNonAlphanumeric = false;
-                    options.User.AllowedUserNameCharacters = "";
+                    options.Password.RequireUppercase = false;
                 })
                 .AddEntityFrameworkStores<BankContext>();
+
             services.AddControllers();
             services.AddMvc(options => options.EnableEndpointRouting = false);
+
+            services.AddSwaggerGen(c => {
+                    c.SwaggerDoc("v1", new OpenApiInfo {
+                        Title = "Customers API",
+                        Version = "v1",
+                        Description = "API to manage Customers",
+                    });
+            });
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<IRepository, EFCoreRepository>();
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -77,9 +93,17 @@ namespace BankingApp.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            } else {
+                // app.UseMiddleware<ErrorHandlingMiddleware>();
+                app.UseExceptionHandler("/Error");
             }
 
             // app.UseWelcomePage();
+
+            app.UseSwagger();
+            app.UseSwaggerUI( c=> {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer API V1");
+            });
 
             app.UseHttpsRedirection();
 
@@ -89,18 +113,13 @@ namespace BankingApp.API
 
             app.UseAuthorization();
 
+            app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-            app.UseStaticFiles();
-            app.UseMvc(routes => {
-                    routes.MapRoute(
-                                    name: "default",
-                                    template: "{controller=Home}/{action=Index}/{id?}"
-                                    );
-                });
         }
     }
 }

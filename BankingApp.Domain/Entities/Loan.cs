@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 
 namespace BankingApp.Domain.Entities {
-    public class Loan {
-        public int LoanId { get; set; }
+    public class Loan: BaseEntity {
         public decimal InterestRate { get; set; }
         public int Period { get; set; }
 
