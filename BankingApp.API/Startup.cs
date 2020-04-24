@@ -94,8 +94,7 @@ namespace BankingApp.API
             {
                 app.UseDeveloperExceptionPage();
             } else {
-                // app.UseMiddleware<ErrorHandlingMiddleware>();
-                app.UseExceptionHandler("/Error");
+                app.UseMiddleware<ErrorHandlingMiddleware>();
             }
 
             // app.UseWelcomePage();

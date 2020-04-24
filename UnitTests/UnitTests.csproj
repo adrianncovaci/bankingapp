@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../BankingApp.Domain/BankingApp.Domain.csproj" />
     <ProjectReference Include="../BankingApp.API/BankingApp.API.csproj" />
   </ItemGroup>
-
 </Project>

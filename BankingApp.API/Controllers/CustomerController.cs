@@ -53,6 +53,7 @@ namespace BankingApp.API.Controllers {
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Subject = new ClaimsIdentity(new Claim[] {
                         new Claim(ClaimTypes.Name, customer.Id.ToString()),
+                        new Claim("FirstName", customer.FirstName),
                         new Claim("RegisteredDate", customer.RegisteredDate.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),

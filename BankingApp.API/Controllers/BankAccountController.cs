@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using BankingApp.API.Helpers.BankAccount;
 
 namespace BankingApp.API.Controllers {
-    [AuthorizeAttribute]
+    // [AuthorizeAttribute]
     [ApiControllerAttribute]
     [Route("[controller]")]
     public class BankAccountController: ControllerBase {
@@ -22,7 +22,7 @@ namespace BankingApp.API.Controllers {
         private readonly IRepository _repo;
         private readonly UserManager<Customer> _customerManager;
         private readonly IMapper _mapper;
-        private readonly ITransactionRepository _tRepo;
+        //private readonly ITransactionRepository _tRepo;
 
         public BankAccountController(IRepository repo, UserManager<Customer> customerManager, IMapper mapper) {
             _repo = repo;
@@ -44,7 +44,7 @@ namespace BankingApp.API.Controllers {
             return Ok(model);
         }
 
-        [HttpGet]
+        [HttpGetAttribute]
         public async Task<IActionResult> GetBankAccountsByUser() {
             var customerId = Int32.Parse(User.Identity.Name);
             var bankAccs = await _repo.GetWithWhere<BankAccount>(x => x.CustomerId == customerId);
