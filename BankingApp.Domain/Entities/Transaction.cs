@@ -7,7 +7,8 @@ namespace BankingApp.Domain.Entities {
 
         public int SenderAccountId { get; set; }
         public BankAccount SenderAccount { get; set; }
-        public int ReceiverAccountId { get; set; }
+        public int? ReceiverAccountId { get; set; }
         public BankAccount ReceiverAccount { get; set; }
+        public string Message { get; set; }
     }
 }

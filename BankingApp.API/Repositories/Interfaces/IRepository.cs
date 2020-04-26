@@ -13,5 +13,6 @@ namespace BankingApp.API.Repositories.Interfaces {
         Task<T> Add<T>(T entity) where T: BaseEntity;
         Task<T> Update<T> (T entity) where T: BaseEntity;
         Task<T> Delete<T> (int id) where T: BaseEntity;
+        Task<bool> SaveAll();
     }
 }

@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using BankingApp.Domain.Entities;
+using BankingApp.API.Models.Transactions;
 
 namespace BankingApp.API.Repositories.Interfaces {
     public interface ITransactionRepository {
-        // Task<T> GetByUser<T>(int id) where T: BaseEntity;
-        Task<T> Withdraw<T>(int accId, decimal amount) where T: BaseEntity;
-        Task<T> Deposit<T> (int accId, decimal amount) where T: BaseEntity;
+        Task<Transaction> CreateTransaction(TransactionModel model);
+        Task<TransactionModel> Withdraw(DepositWithdrawalModel model);
+        Task<TransactionModel> Deposit(DepositWithdrawalModel model);
+        Task<TransactionModel> Transfer(TransactionModel model);
     }
 }

@@ -12,6 +12,8 @@ using BankingApp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using BankingApp.API.Helpers.BankAccount;
+using BankingApp.API.Helpers;
+using BankingApp.API.Models.Transactions;
 
 namespace BankingApp.API.Controllers {
     // [AuthorizeAttribute]
@@ -22,12 +24,14 @@ namespace BankingApp.API.Controllers {
         private readonly IRepository _repo;
         private readonly UserManager<Customer> _customerManager;
         private readonly IMapper _mapper;
-        //private readonly ITransactionRepository _tRepo;
+        private readonly ITransactionRepository _serv;
 
-        public BankAccountController(IRepository repo, UserManager<Customer> customerManager, IMapper mapper) {
+        public BankAccountController(IRepository repo, UserManager<Customer> customerManager,
+                                     IMapper mapper, ITransactionRepository serv) {
             _repo = repo;
             _customerManager = customerManager;
             _mapper = mapper;
+            _serv = serv;
         }
 
         [HttpGetAttribute("all")]
@@ -58,7 +62,7 @@ namespace BankingApp.API.Controllers {
             var customer = await _customerManager.FindByIdAsync(customerId);
             var bankAccountType = await _repo.GetById<BankAccountType>(model.AccountType);
             if (customer == null || bankAccountType == null)
-                return BadRequest(customer.Id);
+                throw new AppException("Unavailable user");
            
             var bankAccountName = await CreateBankAccount.GenerateBankAccountNumber(bankAccountType.Code, customer);
             var balance = model.InitialDeposit;
@@ -90,6 +94,40 @@ namespace BankingApp.API.Controllers {
 
             await _repo.Add(bankAccount);
             return Ok(bankModel);
+        }
+
+        [HttpPostAttribute("freeze/{id}")]
+        public async Task<IActionResult> FreezeBankAccount(int id) {
+            var account = await _repo.GetById<BankAccount>(id);
+            if (account != null)
+                throw new AppException("Account not available.");
+            if (account.AccountStatusId == 2)
+                throw new AppException("Account is already frozen.");
+
+            await _repo.SaveAll();
+
+            return Ok();
+        }
+
+        [HttpPostAttribute("deposit/")]
+        public async Task<IActionResult> Deposit([FromBodyAttribute]DepositWithdrawalModel model) {
+            var transactionModel = await _serv.Deposit(model);
+            var transaction = await _serv.CreateTransaction(transactionModel);
+            return Ok();
+        }
+
+        [HttpPostAttribute("withdraw/")]
+        public async Task<IActionResult> Withdraw([FromBodyAttribute]DepositWithdrawalModel model) {
+            var transactionModel = await _serv.Withdraw(model);
+            var transaction = await _serv.CreateTransaction(transactionModel);
+            return Ok();
+        }
+
+        [HttpPostAttribute("transfer/")]
+        public async Task<IActionResult> Transfer([FromBodyAttribute]TransactionModel model) {
+            await _serv.Transfer(model);
+            var transaction = await _serv.CreateTransaction(model);
+            return Ok(transaction);
         }
     }
 }

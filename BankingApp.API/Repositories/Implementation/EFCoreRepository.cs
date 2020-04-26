@@ -57,6 +57,10 @@ namespace BankingApp.API.Repositories {
             return entity;
         }
 
+        public async Task<bool> SaveAll() {
+            return await _context.SaveChangesAsync() >= 0;
+        }
+
         public async Task<List<T>> GetWithWhere<T>(params Expression<Func<T, bool>>[] props) where T : BaseEntity
         {
             var query = IncludeProperties(props);

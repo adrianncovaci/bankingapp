@@ -1,67 +1,77 @@
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using BankingApp.API.Helpers;
 using BankingApp.API.Models.Transactions;
 using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace BankingApp.API.Repositories {
-    public class TransactionRepository : ITransactionRepository
-    {
-        private readonly BankContext _context;
-        private readonly IMapper _mapper;
-        private readonly UserManager<Customer> _customerManager;
-        private readonly IRepository _repo;
+    public class TransactionRepository: ITransactionRepository {
 
-        public TransactionRepository(BankContext context, IMapper mapper, IRepository repo) {
-            _context = context;
-            _mapper = mapper;
+        private readonly IRepository _repo;
+        private readonly IMapper _mapper;
+
+        public TransactionRepository(IRepository repo, IMapper mapper) {
             _repo = repo;
+            _mapper = mapper;
         }
 
-        public async Task _withdraw(int accId, decimal amount)
-        {
-            if (amount <= 0) {
+        public async Task<Transaction> CreateTransaction(TransactionModel model) {
+            var transaction = _mapper.Map<Transaction>(model);
+            await _repo.Add(transaction);
+            return transaction;
+        }
+
+        public async Task<TransactionModel> Deposit(DepositWithdrawalModel model) {
+            if (model.Amount <= 0) {
                 throw new AppException("Invalid amount");
             }
 
-            var account = await _repo.GetById<BankAccount>(accId);
+            var account = await _repo.GetById<BankAccount>(model.SenderAccountId);
 
             if (account == null) {
                 throw new AppException("Unavailable bank account");
             }
 
-            if (account.Balance < amount)
+            if (string.Equals(account.AccountStatus.Status, "frozen", StringComparison.InvariantCultureIgnoreCase)) {
+                throw new AppException("Your bank account is frozen!");
+            }
+
+            account.Balance += model.Amount;
+            var transactionModel = _mapper.Map<TransactionModel>(model);
+            return transactionModel;
+        }
+
+        public async Task<TransactionModel> Withdraw(DepositWithdrawalModel model) {
+            if (model.Amount <= 0) {
+                throw new AppException("Invalid amount");
+            }
+
+            var account = await _repo.GetById<BankAccount>(model.SenderAccountId);
+
+            if (account == null) {
+                throw new AppException("Unavailable bank account");
+            }
+
+            if (string.Equals(account.AccountStatus.Status, "frozen", StringComparison.InvariantCultureIgnoreCase)) {
+                throw new AppException("Your bank account is frozen!");
+            }
+
+            if (account.Balance < model.Amount)
                 throw new AppException("Cannot withdraw more than available balance");
 
-            account.Balance -= amount;
+            account.Balance -= model.Amount;
+            var transactionModel = _mapper.Map<TransactionModel>(model);
+            return transactionModel;
         }
 
-        public async Task _deposit(int accId, decimal amount)
-        {
-            if (amount <= 0) {
-                throw new AppException("Invalid amount");
-            }
-           
-            var account = await _repo.GetById<BankAccount>(accId);
-
-            if (account == null) {
-                throw new AppException("Unavailable bank account");
-            }
-
-            account.Balance += amount;
+        public async Task<TransactionModel> Transfer(TransactionModel model) {
+            var withdrawModel = _mapper.Map<DepositWithdrawalModel>(model);
+            await Withdraw(withdrawModel);
+            withdrawModel.SenderAccountId = model.ReceiverAccountId.Value;
+            await Deposit(withdrawModel);
+            return model;
         }
-
-        public async Task<T> Deposit<T>(int acc, decimal amount) where T : BaseEntity {
-            throw new System.NotImplementedException();
-        }
-
-        public async Task<T> Withdraw<T>(int accId, decimal amount) where T : BaseEntity
-        {
-            throw new System.NotImplementedException();
-        }
-    }
+     }
 }

@@ -50,7 +50,9 @@ namespace BankingApp.API
                 })
                 .AddEntityFrameworkStores<BankContext>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                                                       options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                                                       );
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
             services.AddSwaggerGen(c => {
@@ -63,7 +65,7 @@ namespace BankingApp.API
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IRepository, EFCoreRepository>();
-
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 

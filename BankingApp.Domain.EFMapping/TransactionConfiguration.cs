@@ -14,7 +14,8 @@ namespace BankingApp.Domain.EFMapping {
             builder.HasOne(o => o.ReceiverAccount)
                 .WithMany(o => o.ReceiverTransactions)
                 .HasForeignKey(o => o.ReceiverAccountId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             builder.Property(o => o.DateIssued)
                 .HasDefaultValue(DateTime.Now)

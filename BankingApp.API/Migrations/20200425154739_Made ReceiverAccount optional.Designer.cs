@@ -4,14 +4,16 @@ using BankingApp.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankingApp.API.Migrations
 {
     [DbContext(typeof(BankContext))]
-    partial class BankContextModelSnapshot : ModelSnapshot
+    [Migration("20200425154739_Made ReceiverAccount optional")]
+    partial class MadeReceiverAccountoptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +48,7 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 19, 13, 15, 131, DateTimeKind.Local).AddTicks(7540));
+                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 47, 38, 495, DateTimeKind.Local).AddTicks(2217));
 
                     b.Property<decimal>("InitialDeposit")
                         .HasColumnType("decimal(18,2)");
@@ -234,7 +236,7 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("RegisteredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 19, 13, 15, 147, DateTimeKind.Local).AddTicks(1447));
+                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 47, 38, 510, DateTimeKind.Local).AddTicks(8184));
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -490,12 +492,12 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateIssued")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 19, 13, 15, 162, DateTimeKind.Local).AddTicks(6750));
+                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 47, 38, 526, DateTimeKind.Local).AddTicks(2966));
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ReceiverAccountId")
+                    b.Property<int>("ReceiverAccountId")
                         .HasColumnType("int");
 
                     b.Property<int>("SenderAccountId")
