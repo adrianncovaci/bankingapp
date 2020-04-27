@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankingApp.API.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20200425153339_Added Message Field to Transaction Table")]
-    partial class AddedMessageFieldtoTransactionTable
+    [Migration("20200427220248_Removed seeding roles")]
+    partial class Removedseedingroles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,14 +33,15 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("nvarchar(13)")
                         .HasMaxLength(13);
 
-                    b.Property<int>("AccountStatusId")
-                        .HasColumnType("int");
-
                     b.Property<int>("AccountTypeId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("BankAccountStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -48,7 +49,7 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 33, 39, 141, DateTimeKind.Local).AddTicks(6618));
+                        .HasDefaultValue(new DateTime(2020, 4, 28, 1, 2, 48, 154, DateTimeKind.Local).AddTicks(2145));
 
                     b.Property<decimal>("InitialDeposit")
                         .HasColumnType("decimal(18,2)");
@@ -70,40 +71,11 @@ namespace BankingApp.API.Migrations
                     b.HasIndex("AccountNumber")
                         .IsUnique();
 
-                    b.HasIndex("AccountStatusId");
-
                     b.HasIndex("AccountTypeId");
 
                     b.HasIndex("CustomerId");
 
                     b.ToTable("BankAccounts");
-                });
-
-            modelBuilder.Entity("BankingApp.Domain.Entities.BankAccountStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BankAccountStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Status = "Frozen"
-                        });
                 });
 
             modelBuilder.Entity("BankingApp.Domain.Entities.BankAccountType", b =>
@@ -118,7 +90,7 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("nvarchar(3)")
                         .HasMaxLength(3);
 
-                    b.Property<decimal>("InitialInterestRate")
+                    b.Property<decimal?>("InitialInterestRate")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("MaintenanceFee")
@@ -157,6 +129,13 @@ namespace BankingApp.API.Migrations
                             InitialInterestRate = 0.04m,
                             MaintenanceFee = 0m,
                             Type = "Retirement"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "666",
+                            MaintenanceFee = 0m,
+                            Type = "Loan"
                         });
                 });
 
@@ -236,7 +215,7 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("RegisteredDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 33, 39, 156, DateTimeKind.Local).AddTicks(4334));
+                        .HasDefaultValue(new DateTime(2020, 4, 28, 1, 2, 48, 166, DateTimeKind.Local).AddTicks(7364));
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -281,6 +260,9 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("FixedRate")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("InterestRate")
                         .HasColumnType("decimal(18,2)");
 
@@ -295,6 +277,40 @@ namespace BankingApp.API.Migrations
                     b.HasIndex("LoanTypeId");
 
                     b.ToTable("Loans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FixedRate = false,
+                            InterestRate = 0.03m,
+                            LoanTypeId = 1,
+                            Period = 180
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FixedRate = false,
+                            InterestRate = 0.0355m,
+                            LoanTypeId = 1,
+                            Period = 360
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FixedRate = true,
+                            InterestRate = 0.0435m,
+                            LoanTypeId = 3,
+                            Period = 48
+                        },
+                        new
+                        {
+                            Id = 4,
+                            FixedRate = true,
+                            InterestRate = 0.0437m,
+                            LoanTypeId = 3,
+                            Period = 60
+                        });
                 });
 
             modelBuilder.Entity("BankingApp.Domain.Entities.LoanOfficer", b =>
@@ -343,11 +359,12 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Comments")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateIssued")
                         .HasColumnType("datetime2");
@@ -355,59 +372,51 @@ namespace BankingApp.API.Migrations
                     b.Property<int>("LoanId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LoanOfficerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LoanRequestStatusId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("ResponseDate")
                         .ValueGeneratedOnUpdate()
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("LoanId");
-
-                    b.HasIndex("LoanOfficerId");
-
-                    b.HasIndex("LoanRequestStatusId");
 
                     b.ToTable("LoanRequests");
                 });
 
-            modelBuilder.Entity("BankingApp.Domain.Entities.LoanRequestStatus", b =>
+            modelBuilder.Entity("BankingApp.Domain.Entities.LoanRequestAction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Status")
+                    b.Property<string>("Action")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateAction")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LoanOfficerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LoanRequestId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("LoanRequestStatuses");
+                    b.HasIndex("LoanOfficerId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Status = "Pending"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Status = "Accepted"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Status = "Declined"
-                        });
+                    b.HasIndex("LoanRequestId")
+                        .IsUnique();
+
+                    b.ToTable("LoanRequestActions");
                 });
 
             modelBuilder.Entity("BankingApp.Domain.Entities.LoanType", b =>
@@ -425,6 +434,23 @@ namespace BankingApp.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LoanTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Type = "Mortgage"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Type = "Student Loan"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Type = "Auto Loan"
+                        });
                 });
 
             modelBuilder.Entity("BankingApp.Domain.Entities.Role", b =>
@@ -492,12 +518,12 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateIssued")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 4, 25, 18, 33, 39, 171, DateTimeKind.Local).AddTicks(7423));
+                        .HasDefaultValue(new DateTime(2020, 4, 28, 1, 2, 48, 195, DateTimeKind.Local).AddTicks(8890));
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReceiverAccountId")
+                    b.Property<int?>("ReceiverAccountId")
                         .HasColumnType("int");
 
                     b.Property<int>("SenderAccountId")
@@ -592,12 +618,6 @@ namespace BankingApp.API.Migrations
 
             modelBuilder.Entity("BankingApp.Domain.Entities.BankAccount", b =>
                 {
-                    b.HasOne("BankingApp.Domain.Entities.BankAccountStatus", "AccountStatus")
-                        .WithMany("Accounts")
-                        .HasForeignKey("AccountStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("BankingApp.Domain.Entities.BankAccountType", "AccountType")
                         .WithMany("Accounts")
                         .HasForeignKey("AccountTypeId")
@@ -616,15 +636,14 @@ namespace BankingApp.API.Migrations
                     b.HasOne("BankingApp.Domain.Entities.LoanType", "LoanType")
                         .WithMany("Loans")
                         .HasForeignKey("LoanTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("BankingApp.Domain.Entities.LoanRequest", b =>
                 {
-                    b.HasOne("BankingApp.Domain.Entities.BankAccount", "Account")
+                    b.HasOne("BankingApp.Domain.Entities.Customer", "Customer")
                         .WithMany("LoanRequests")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -633,17 +652,20 @@ namespace BankingApp.API.Migrations
                         .HasForeignKey("LoanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
 
+            modelBuilder.Entity("BankingApp.Domain.Entities.LoanRequestAction", b =>
+                {
                     b.HasOne("BankingApp.Domain.Entities.LoanOfficer", "LoanOfficer")
-                        .WithMany("LoanRequests")
+                        .WithMany("LoanRequestActions")
                         .HasForeignKey("LoanOfficerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BankingApp.Domain.Entities.LoanRequestStatus", "LoanRequestStatus")
-                        .WithMany("LoanRequests")
-                        .HasForeignKey("LoanRequestStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("BankingApp.Domain.Entities.LoanRequest", "LoanRequest")
+                        .WithOne("LoanRequestAction")
+                        .HasForeignKey("BankingApp.Domain.Entities.LoanRequestAction", "LoanRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -661,8 +683,7 @@ namespace BankingApp.API.Migrations
                     b.HasOne("BankingApp.Domain.Entities.BankAccount", "ReceiverAccount")
                         .WithMany("ReceiverTransactions")
                         .HasForeignKey("ReceiverAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BankingApp.Domain.Entities.BankAccount", "SenderAccount")
                         .WithMany("SenderTransactions")
@@ -691,14 +712,14 @@ namespace BankingApp.API.Migrations
 
             modelBuilder.Entity("BankingApp.Domain.Entities.UserRole", b =>
                 {
-                    b.HasOne("BankingApp.Domain.Entities.Role", null)
-                        .WithMany()
+                    b.HasOne("BankingApp.Domain.Entities.Role", "Role")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BankingApp.Domain.Entities.Customer", null)
-                        .WithMany()
+                    b.HasOne("BankingApp.Domain.Entities.Customer", "Customer")
+                        .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

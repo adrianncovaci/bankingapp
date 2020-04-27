@@ -46,18 +46,22 @@ namespace BankingApp.API.Controllers {
 
             if (customer == null || !await _customerManager.CheckPasswordAsync(customer, model.Password))
                 return BadRequest(new { message = "Incorrect email and/or password" });
-
+            var roles = await _customerManager.GetRolesAsync(customer);
             var key = Encoding.ASCII.GetBytes(_settings.Secret);
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor {
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Subject = new ClaimsIdentity(new Claim[] {
+                Subject = new ClaimsIdentity(new List<Claim> {
                         new Claim(ClaimTypes.Name, customer.Id.ToString()),
                         new Claim("FirstName", customer.FirstName),
-                        new Claim("RegisteredDate", customer.RegisteredDate.ToString())
+                        new Claim("RegisteredDate", customer.RegisteredDate.ToString()),
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),
             };
+            foreach (var role in roles) {
+                var claim = new Claim(ClaimTypes.Role, role);
+                tokenDescriptor.Subject.AddClaim(claim);
+            }
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
             var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(customer);

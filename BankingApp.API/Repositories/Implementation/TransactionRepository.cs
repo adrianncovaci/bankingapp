@@ -34,7 +34,7 @@ namespace BankingApp.API.Repositories {
                 throw new AppException("Unavailable bank account");
             }
 
-            if (string.Equals(account.AccountStatus.Status, "frozen", StringComparison.InvariantCultureIgnoreCase)) {
+            if (string.Equals(account.BankAccountStatus.ToString(), "frozen", StringComparison.InvariantCultureIgnoreCase)) {
                 throw new AppException("Your bank account is frozen!");
             }
 
@@ -54,7 +54,7 @@ namespace BankingApp.API.Repositories {
                 throw new AppException("Unavailable bank account");
             }
 
-            if (string.Equals(account.AccountStatus.Status, "frozen", StringComparison.InvariantCultureIgnoreCase)) {
+            if (string.Equals(account.BankAccountStatus.ToString(), "frozen", StringComparison.InvariantCultureIgnoreCase)) {
                 throw new AppException("Your bank account is frozen!");
             }
 

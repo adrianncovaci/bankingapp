@@ -1,23 +1,56 @@
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
+using BankingApp.API.Helpers;
+using BankingApp.API.Helpers.BankAccount;
+using BankingApp.API.Models.BankAccounts;
+using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace BankingApp.API.Repositories {
-    public class BankAccountRepository {
-        private readonly BankContext _context;
-        private readonly IMapper _mapper;
+    public class BankAccountRepository: IBankAccountRepository {
         private readonly UserManager<Customer> _customerManager;
+        private readonly IRepository _repo;
 
-        public BankAccountRepository(BankContext context, IMapper mapper, UserManager<Customer> customerManager) {
-            _context = context;
-            _mapper = mapper;
+        public BankAccountRepository(IRepository repo, UserManager<Customer> customerManager) {
+            _repo = repo;
             _customerManager = customerManager;
         }
 
-        // [HttpPostAttribute]
-        // public async Task<IActionResult> Withdrawal(int amount) {
-        //     Customer customer = await _customerManager.GetUserAsync(User);
-        // }
+        public async Task<BankAccount> CreateAccount(CreateBankAccountModel model, string customerId)
+        {
+            var customer = await _customerManager.FindByIdAsync(customerId);
+            var bankAccountType = await _repo.GetById<BankAccountType>(model.AccountType);
+            if (customer == null || bankAccountType == null)
+                throw new AppException("Unavailable user");
+
+            var bankAccountName = await CreateBankAccount.GenerateBankAccountNumber(bankAccountType.Code, customer);
+            var balance = model.InitialDeposit;
+            var initialDeposit = model.InitialDeposit;
+            var maintenanceFee = bankAccountType.MaintenanceFee;
+            var interestRate = bankAccountType.InitialInterestRate ?? 0;
+
+            DateTime? lastDeposit;
+            if(initialDeposit > 0) {
+                lastDeposit = DateTime.Now;
+            } else {
+                lastDeposit = null;
+            }
+
+            var bankAccount = new BankAccount {
+                AccountNumber = bankAccountName,
+                Balance = balance,
+                MaintenanceFee = maintenanceFee,
+                InterestRate = interestRate,
+                InitialDeposit = initialDeposit,
+                LastDeposit = lastDeposit,
+                BankAccountStatus = BankAccountStatus.Active,
+                AccountType = bankAccountType,
+                Customer = customer
+            };
+
+            return bankAccount;
+        }
     }
 }

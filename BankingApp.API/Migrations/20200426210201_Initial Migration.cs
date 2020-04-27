@@ -42,7 +42,9 @@ namespace BankingApp.API.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(maxLength: 64, nullable: false),
-                    Code = table.Column<string>(maxLength: 3, nullable: false)
+                    Code = table.Column<string>(maxLength: 3, nullable: false),
+                    InitialInterestRate = table.Column<decimal>(nullable: false),
+                    MaintenanceFee = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,7 +78,7 @@ namespace BankingApp.API.Migrations
                     City = table.Column<string>(maxLength: 64, nullable: false),
                     Address = table.Column<string>(maxLength: 128, nullable: false),
                     ZipCode = table.Column<string>(maxLength: 6, nullable: false),
-                    RegisteredDate = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 20, 20, 4, 59, 487, DateTimeKind.Local).AddTicks(2872))
+                    RegisteredDate = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 27, 0, 2, 0, 586, DateTimeKind.Local).AddTicks(2760))
                 },
                 constraints: table =>
                 {
@@ -243,7 +245,7 @@ namespace BankingApp.API.Migrations
                     MaintenanceFee = table.Column<decimal>(nullable: false),
                     InterestRate = table.Column<decimal>(nullable: false),
                     InitialDeposit = table.Column<decimal>(nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 20, 20, 4, 59, 472, DateTimeKind.Local).AddTicks(7463)),
+                    DateCreated = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 27, 0, 2, 0, 571, DateTimeKind.Local).AddTicks(969)),
                     LastDeposit = table.Column<DateTime>(nullable: true),
                     Period = table.Column<int>(nullable: true),
                     AccountStatusId = table.Column<int>(nullable: false),
@@ -281,6 +283,7 @@ namespace BankingApp.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InterestRate = table.Column<decimal>(nullable: false),
                     Period = table.Column<int>(nullable: false),
+                    FixedRate = table.Column<bool>(nullable: false),
                     LoanTypeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -300,10 +303,11 @@ namespace BankingApp.API.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateIssued = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 20, 20, 4, 59, 501, DateTimeKind.Local).AddTicks(8675)),
+                    DateIssued = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2020, 4, 27, 0, 2, 0, 605, DateTimeKind.Local).AddTicks(6464)),
                     Amount = table.Column<decimal>(nullable: false),
                     SenderAccountId = table.Column<int>(nullable: false),
-                    ReceiverAccountId = table.Column<int>(nullable: false)
+                    ReceiverAccountId = table.Column<int>(nullable: true),
+                    Message = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -333,16 +337,16 @@ namespace BankingApp.API.Migrations
                     ResponseDate = table.Column<DateTime>(nullable: true),
                     LoanRequestStatusId = table.Column<int>(nullable: false),
                     LoanOfficerId = table.Column<int>(nullable: false),
-                    AccountId = table.Column<int>(nullable: false),
+                    CustomerId = table.Column<int>(nullable: false),
                     LoanId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LoanRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LoanRequests_BankAccounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "BankAccounts",
+                        name: "FK_LoanRequests_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -376,12 +380,12 @@ namespace BankingApp.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "BankAccountTypes",
-                columns: new[] { "Id", "Code", "Type" },
+                columns: new[] { "Id", "Code", "InitialInterestRate", "MaintenanceFee", "Type" },
                 values: new object[,]
                 {
-                    { 1, "101", "Savings" },
-                    { 2, "301", "Checkings" },
-                    { 3, "901", "Retirement" }
+                    { 1, "101", 0.03m, 10m, "Savings" },
+                    { 2, "301", 0m, 10m, "Checkings" },
+                    { 3, "901", 0.04m, 0m, "Retirement" }
                 });
 
             migrationBuilder.InsertData(
@@ -392,6 +396,27 @@ namespace BankingApp.API.Migrations
                     { 1, "Pending" },
                     { 2, "Accepted" },
                     { 3, "Declined" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "LoanTypes",
+                columns: new[] { "Id", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Mortgage" },
+                    { 2, "Student Loan" },
+                    { 3, "Auto Loan" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Loans",
+                columns: new[] { "Id", "FixedRate", "InterestRate", "LoanTypeId", "Period" },
+                values: new object[,]
+                {
+                    { 1, false, 0.03m, 1, 180 },
+                    { 2, false, 0.0355m, 1, 360 },
+                    { 3, true, 0.0435m, 3, 48 },
+                    { 4, true, 0.0437m, 3, 60 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -483,9 +508,9 @@ namespace BankingApp.API.Migrations
                 filter: "[PhoneNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LoanRequests_AccountId",
+                name: "IX_LoanRequests_CustomerId",
                 table: "LoanRequests",
-                column: "AccountId");
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LoanRequests_LoanId",

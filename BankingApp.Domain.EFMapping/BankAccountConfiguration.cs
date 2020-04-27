@@ -13,15 +13,17 @@ namespace BankingApp.Domain.EFMapping {
                 .HasMaxLength(13)
                 .IsRequired();
 
+
+            builder.Property(o => o.BankAccountStatus)
+                .HasConversion(s => s.ToString(),
+                               s => (BankAccountStatus)Enum.Parse(typeof(BankAccountStatus), s))
+                .IsRequired();
+
             builder.HasOne(o => o.AccountType)
                 .WithMany(o => o.Accounts)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(o => o.Customer)
-                .WithMany(o => o.Accounts)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(o => o.AccountStatus)
                 .WithMany(o => o.Accounts)
                 .OnDelete(DeleteBehavior.Restrict);
 

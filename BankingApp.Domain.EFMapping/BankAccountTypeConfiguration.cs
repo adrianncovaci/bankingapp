@@ -16,7 +16,7 @@ namespace BankingApp.API.Data {
                 .IsRequired();
 
             builder.Property(o => o.InitialInterestRate)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.Property(o => o.MaintenanceFee)
                 .IsRequired();
@@ -24,7 +24,8 @@ namespace BankingApp.API.Data {
             builder.HasData(
                             new BankAccountType() { Id = 1, Type = "Savings", Code = "101", InitialInterestRate = 0.03m, MaintenanceFee = 10m },
                             new BankAccountType() { Id = 2, Type = "Checkings", Code = "301", InitialInterestRate = 0m, MaintenanceFee = 10m },
-                            new BankAccountType() { Id = 3, Type = "Retirement", Code = "901", InitialInterestRate = 0.04m, MaintenanceFee = 0m}
+                            new BankAccountType() { Id = 3, Type = "Retirement", Code = "901", InitialInterestRate = 0.04m, MaintenanceFee = 0m},
+                            new BankAccountType() { Id = 4, Type = "Loan", Code = "666", MaintenanceFee = 0m}
                             );
         }
     }

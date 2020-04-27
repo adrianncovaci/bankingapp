@@ -50,6 +50,7 @@ namespace BankingApp.API
                 })
                 .AddEntityFrameworkStores<BankContext>();
 
+
             services.AddControllers().AddNewtonsoftJson(options =>
                                                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                                                        );
@@ -66,6 +67,7 @@ namespace BankingApp.API
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IRepository, EFCoreRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IBankAccountRepository, BankAccountRepository>();
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 

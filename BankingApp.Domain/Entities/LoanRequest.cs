@@ -6,16 +6,20 @@ namespace BankingApp.Domain.Entities {
         public string Comments { get; set; }
         public DateTime? ResponseDate { get; set; }
 
-        public int LoanRequestStatusId { get; set; }
-        public LoanRequestStatus LoanRequestStatus { get; set; }
+        public LoanRequestStatus Status { get; set; }
 
-        public int LoanOfficerId { get; set; }
-        public LoanOfficer LoanOfficer { get; set; }
-
-        public int AccountId { get; set; }
-        public BankAccount Account { get; set; }
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
 
         public int LoanId { get; set; }
         public Loan Loan { get; set; }
+
+        public LoanRequestAction LoanRequestAction { get; set; }
+    }
+
+    public enum LoanRequestStatus {
+        Pending,
+        Accepted,
+        Declined
     }
 }

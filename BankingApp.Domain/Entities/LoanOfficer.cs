@@ -8,7 +8,6 @@ namespace BankingApp.Domain.Entities {
         public DateTime DateHired { get; private set; } = DateTime.Now;
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
-
-        public ICollection<LoanRequest> LoanRequests { get; set; }
+        public ICollection<LoanRequestAction> LoanRequestActions { get; set; }
     }
 }

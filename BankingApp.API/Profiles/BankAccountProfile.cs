@@ -6,7 +6,7 @@ namespace BankingApp.API.Profiles {
     public class BankAccountProfile: Profile {
         public BankAccountProfile() {
             CreateMap<BankAccount, BankAccountModel>()
-                .ForMember(x => x.AccountStatus, y => y.MapFrom(z => z.AccountStatus.Status.ToUpper()));
+                .ForMember(x => x.AccountStatus, y => y.MapFrom(z => z.BankAccountStatus.ToString()));
             CreateMap<BankAccount, BankAccountModel>()
                 .ForMember(x => x.AccountType, y => y.MapFrom(z => z.AccountType.Type));
             CreateMap<BankAccountModel, BankAccount>();

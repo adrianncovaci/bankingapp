@@ -13,5 +13,7 @@ namespace BankingApp.Domain.Entities {
         public string ZipCode { get; set; }
         public DateTime RegisteredDate { get; private set; }
         public ICollection<BankAccount> Accounts { get; set; }
+        public ICollection<LoanRequest> LoanRequests { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; }
     }
 }

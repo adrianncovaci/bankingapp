@@ -13,8 +13,7 @@ namespace BankingApp.Domain.Entities {
         public int? Period { get; set; }
 
 
-        public int AccountStatusId { get; set; }
-        public BankAccountStatus AccountStatus { get; set; }
+        public BankAccountStatus BankAccountStatus { get; set; }
 
         public int AccountTypeId { get; set; }
         public BankAccountType AccountType { get; set; }
@@ -24,7 +23,10 @@ namespace BankingApp.Domain.Entities {
 
         public ICollection<Transaction> SenderTransactions { get; set; }
         public ICollection<Transaction> ReceiverTransactions { get; set; }
+    }
 
-        public ICollection<LoanRequest> LoanRequests { get; set; }
+    public enum BankAccountStatus {
+        Active,
+        Frozen
     }
 }

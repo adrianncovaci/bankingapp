@@ -16,24 +16,25 @@ using BankingApp.API.Helpers;
 using BankingApp.API.Models.Transactions;
 
 namespace BankingApp.API.Controllers {
-    // [AuthorizeAttribute]
+    [AuthorizeAttribute]
     [ApiControllerAttribute]
     [Route("[controller]")]
     public class BankAccountController: ControllerBase {
 
         private readonly IRepository _repo;
-        private readonly UserManager<Customer> _customerManager;
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _serv;
+        private readonly IBankAccountRepository _bankRepo;
 
-        public BankAccountController(IRepository repo, UserManager<Customer> customerManager,
+        public BankAccountController(IRepository repo, IBankAccountRepository bankRepo,
                                      IMapper mapper, ITransactionRepository serv) {
             _repo = repo;
-            _customerManager = customerManager;
             _mapper = mapper;
             _serv = serv;
+            _bankRepo = bankRepo;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGetAttribute("all")]
         public async Task<IActionResult> GetAccounts() {
             var accs = await _repo.GetAll<BankAccount>();
@@ -58,39 +59,10 @@ namespace BankingApp.API.Controllers {
 
         [HttpPostAttribute]
         public async Task<IActionResult> CreateAccount(CreateBankAccountModel model) {
+
             var customerId = User.Identity.Name;
-            var customer = await _customerManager.FindByIdAsync(customerId);
-            var bankAccountType = await _repo.GetById<BankAccountType>(model.AccountType);
-            if (customer == null || bankAccountType == null)
-                throw new AppException("Unavailable user");
-           
-            var bankAccountName = await CreateBankAccount.GenerateBankAccountNumber(bankAccountType.Code, customer);
-            var balance = model.InitialDeposit;
-            var initialDeposit = model.InitialDeposit;
-            var maintenanceFee = bankAccountType.MaintenanceFee;
-            var interestRate = bankAccountType.InitialInterestRate;
-            DateTime? lastDeposit;
-            if(initialDeposit > 0) {
-                lastDeposit = DateTime.Now;
-            } else {
-                lastDeposit = null;
-            }
-            var accountStatus = await _repo.GetById<BankAccountStatus>(1);
-
-            var bankAccount = new BankAccount {
-                AccountNumber = bankAccountName,
-                Balance = balance,
-                MaintenanceFee = maintenanceFee,
-                InterestRate = interestRate,
-                InitialDeposit = initialDeposit,
-                LastDeposit = lastDeposit,
-                AccountStatus = accountStatus,
-                AccountType = bankAccountType,
-                Customer = customer
-            };
-
+            var bankAccount = await _bankRepo.CreateAccount(model,  customerId);
             var bankModel = _mapper.Map<BankAccountModel>(bankAccount);
-            bankModel.AccountStatus = accountStatus.Status;
 
             await _repo.Add(bankAccount);
             return Ok(bankModel);
@@ -99,10 +71,27 @@ namespace BankingApp.API.Controllers {
         [HttpPostAttribute("freeze/{id}")]
         public async Task<IActionResult> FreezeBankAccount(int id) {
             var account = await _repo.GetById<BankAccount>(id);
-            if (account != null)
+            if (account == null)
                 throw new AppException("Account not available.");
-            if (account.AccountStatusId == 2)
+            if (string.Equals(account.BankAccountStatus.ToString(), "frozen", StringComparison.InvariantCultureIgnoreCase))
                 throw new AppException("Account is already frozen.");
+
+            account.BankAccountStatus = BankAccountStatus.Frozen;
+
+            await _repo.SaveAll();
+
+            return Ok();
+        }
+
+        [HttpPostAttribute("activate/{id}")]
+        public async Task<IActionResult> ActivateBankAccount(int id) {
+            var account = await _repo.GetById<BankAccount>(id);
+            if (account == null)
+                throw new AppException("Account not available.");
+            if (string.Equals(account.BankAccountStatus.ToString(), "active", StringComparison.InvariantCultureIgnoreCase))
+                throw new AppException("Account is already active.");
+
+            account.BankAccountStatus = BankAccountStatus.Active;
 
             await _repo.SaveAll();
 
