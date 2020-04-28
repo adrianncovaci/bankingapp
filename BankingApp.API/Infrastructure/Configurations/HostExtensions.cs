@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,13 @@ namespace BankingApp.API.Infrastructure.Configurations {
 
                 try {
                     var context = services.GetRequiredService<BankContext>();
-                    var customerManager = services.GetRequiredService<UserManager<Customer>>();
+                    var adminManager = services.GetRequiredService<UserManager<User>>();
                     var roleManager = services.GetRequiredService<RoleManager<Role>>();
+                    var repo = services.GetRequiredService<IRepository>();
                     context.Database.Migrate();
 
                     await Seed.SeedRoles(roleManager);
-                    await Seed.SeedUsers(customerManager);
+                    await Seed.SeedUsers(adminManager, repo);
                 }
                 catch(Exception ex) {
                     var logger = services.GetRequiredService<ILogger<Program>>();

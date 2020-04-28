@@ -32,6 +32,7 @@ namespace BankingApp.API.Controllers {
             return Ok(loanRequest);
         }
 
+        [AuthorizeAttribute(Policy = "LoanOfficerRole")]
         [HttpPostAttribute("reject/{id}")]
         public async Task<IActionResult> DeclineLoanRequest(int id) {
             var loanRequest = await _repo.GetById<LoanRequest>(id);

@@ -17,6 +17,7 @@ using BankingApp.API.Models.Customer;
 using BankingApp.Domain.Entities;
 using BankingApp.Domain.EFMapping;
 using Microsoft.AspNetCore.Identity;
+using BankingApp.API.Repositories.Interfaces;
 
 namespace BankingApp.API.Controllers {
     [AuthorizeAttribute]
@@ -24,37 +25,36 @@ namespace BankingApp.API.Controllers {
     [Route("[controller]")]
     public class CustomerController: ControllerBase {
         private readonly AppSettings _settings;
-        private UserManager<Customer> _customerManager;
-        private IMapper _mapper;
-        private readonly BankContext _context;
-        private readonly SignInManager<Customer> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
+        private readonly IRepository _repo;
+        private readonly SignInManager<User> _signInManager;
 
-        public CustomerController(BankContext context, IMapper mapper,
-                                  IOptions<AppSettings> appSettings, UserManager<Customer> manager,
-                                  SignInManager<Customer> signInManager) {
+        public CustomerController(IRepository repo, IMapper mapper,
+                                  IOptions<AppSettings> appSettings, UserManager<User> manager,
+                                  SignInManager<User> signInManager) {
             _mapper = mapper;
             _settings = appSettings.Value;
-            _context = context;
-            _customerManager = manager;
+            _repo = repo;
+            _userManager = manager;
             _signInManager = signInManager;
         }
 
         [AllowAnonymousAttribute]
         [HttpPostAttribute("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model) {
-            var customer = await _customerManager.FindByEmailAsync(model.Email);
-
-            if (customer == null || !await _customerManager.CheckPasswordAsync(customer, model.Password))
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
                 return BadRequest(new { message = "Incorrect email and/or password" });
-            var roles = await _customerManager.GetRolesAsync(customer);
+            var roles = await _userManager.GetRolesAsync(user);
             var key = Encoding.ASCII.GetBytes(_settings.Secret);
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor {
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 Subject = new ClaimsIdentity(new List<Claim> {
-                        new Claim(ClaimTypes.Name, customer.Id.ToString()),
-                        new Claim("FirstName", customer.FirstName),
-                        new Claim("RegisteredDate", customer.RegisteredDate.ToString()),
+                        new Claim(ClaimTypes.Name, user.Id.ToString()),
+                        new Claim("FirstName", user.FirstName),
+                        new Claim("RegisteredDate", user.RegisteredDate.ToString()),
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),
             };
@@ -64,7 +64,7 @@ namespace BankingApp.API.Controllers {
             }
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(customer);
+            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
             var claims = claimsPrincipal.Claims.ToList();
 
             return Ok( new {
@@ -75,10 +75,15 @@ namespace BankingApp.API.Controllers {
         [AllowAnonymousAttribute]
         [HttpPostAttribute("register")]
         public async Task<IActionResult> Register([FromBody]RegisterModel model) {
+            var user = _mapper.Map<User>(model);
             var customer = _mapper.Map<Customer>(model);
-            customer.UserName = customer.Email;
+
+            user.UserName = user.Email;
             try {
-                var result = await _customerManager.CreateAsync(customer, model.Password);
+                await _userManager.CreateAsync(user, model.Password);
+                await _userManager.AddToRoleAsync(user, "Customer");
+                customer.User = user;
+                var result = await _repo.Add(customer);
                 return Ok(result);
             }
             catch(AppException e) {
@@ -88,7 +93,7 @@ namespace BankingApp.API.Controllers {
 
         [HttpGetAttribute]
         public async Task<IActionResult> GetAll() {
-            var customers = await _context.Customers.ToListAsync();
+            var customers = await _repo.GetAll<Customer>();
             var models = _mapper.Map<IList<CustomerModel>>(customers);
 
             return Ok(customers);
@@ -96,7 +101,7 @@ namespace BankingApp.API.Controllers {
 
         [HttpGetAttribute("{id}")]
         public async Task<IActionResult> GetById(int id) {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _repo.GetById<Customer>(id);
             var model = _mapper.Map<CustomerModel>(customer);
             return Ok(model);
         }
@@ -104,17 +109,17 @@ namespace BankingApp.API.Controllers {
         [HttpPutAttribute("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateModel model) {
             var cust = _mapper.Map<Customer>(model);
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _repo.GetById<Customer>(id);
 
             if (customer == null)
                 throw new AppException("User not found!");
 
-            if (!string.IsNullOrEmpty(cust.Email) && cust.Email != customer.Email ) {
+            if (!string.IsNullOrEmpty(cust.User.Email) && cust.User.Email != customer.User.Email ) {
 
-                if (await _context.Customers.AnyAsync(x => x.Email == cust.Email))
+                if (await _userManager.FindByEmailAsync(cust.User.Email) != null)
                     throw new AppException("Email is already taken");
 
-                customer.Email = cust.Email;
+                customer.User.Email = cust.User.Email;
             }
 
             if (!string.IsNullOrWhiteSpace(cust.FirstName))
@@ -132,15 +137,16 @@ namespace BankingApp.API.Controllers {
             if (!string.IsNullOrWhiteSpace(cust.ZipCode))
                 customer.ZipCode = cust.ZipCode;
 
-            await _customerManager.UpdateAsync(customer);
+            await _userManager.UpdateAsync(customer.User);
             return Ok();
         }
 
 
         [HttpDeleteAttribute("{id}")]
         public async Task<IActionResult> Delete(int id) {
-            var cust = await _context.Customers.FindAsync(id);
-            await _customerManager.DeleteAsync(cust);
+            var cust = await _repo.GetById<Customer>(id);
+            await _userManager.DeleteAsync(cust.User);
+            await _repo.Delete<Customer>(id);
             return Ok();
         }
     }

@@ -13,7 +13,7 @@ namespace BankingApp.Domain.EFMapping {
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
 
-            builder.HasOne(ur => ur.Customer)
+            builder.HasOne(ur => ur.User)
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.UserId)
                 .IsRequired();

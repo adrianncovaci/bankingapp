@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BankingApp.API.Helpers;
@@ -10,18 +11,21 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BankingApp.API.Repositories {
     public class BankAccountRepository: IBankAccountRepository {
-        private readonly UserManager<Customer> _customerManager;
+        private readonly UserManager<User> _userManager;
         private readonly IRepository _repo;
 
-        public BankAccountRepository(IRepository repo, UserManager<Customer> customerManager) {
+        public BankAccountRepository(IRepository repo, UserManager<User> userManager) {
             _repo = repo;
-            _customerManager = customerManager;
+            _userManager = userManager;
         }
 
         public async Task<BankAccount> CreateAccount(CreateBankAccountModel model, string customerId)
         {
-            var customer = await _customerManager.FindByIdAsync(customerId);
+            var user = await _userManager.FindByIdAsync(customerId);
+            var customers = await _repo.GetWithWhere<Customer>(o => o.UserId == user.Id);
+            var customer = customers.FirstOrDefault();
             var bankAccountType = await _repo.GetById<BankAccountType>(model.AccountType);
+
             if (customer == null || bankAccountType == null)
                 throw new AppException("Unavailable user");
 

@@ -14,9 +14,10 @@ namespace BankingApp.Domain.EFMapping {
                 .WithOne(o => o.Customer);
 
             builder.HasIndex(o => o.CNP).IsUnique();
-            builder.HasIndex(o => o.Email).IsUnique();
 
-            builder.Property(o => o.CNP).HasMaxLength(13);
+            builder.Property(o => o.CNP)
+                .HasMaxLength(13)
+                .IsRequired();
 
             builder.Property(o => o.FirstName).HasMaxLength(32).IsRequired();
             builder.Property(o => o.LastName).HasMaxLength(32).IsRequired();
@@ -33,10 +34,6 @@ namespace BankingApp.Domain.EFMapping {
                 .IsRequired();
 
             builder.Property(o => o.ZipCode).HasMaxLength(6).IsRequired();
-
-            builder.Property(o => o.RegisteredDate)
-                .HasDefaultValue(DateTime.Now)
-                .IsRequired();
         }
     }
 }

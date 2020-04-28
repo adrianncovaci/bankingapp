@@ -25,6 +25,7 @@ using BankingApp.API.Repositories;
 using BankingApp.API.Repositories.Interfaces;
 using BankingApp.API.Infrastructure.Middleware;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Identity;
 // using Swashbuckle.Swagger;
 
 namespace BankingApp.API
@@ -43,13 +44,12 @@ namespace BankingApp.API
         {
             services.AddDbContext<BankContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<Customer, Role>(options => {
+            services.AddIdentity<User, Role>(options => {
                     options.Password.RequiredLength = 6;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
                 })
                 .AddEntityFrameworkStores<BankContext>();
-
 
             services.AddControllers().AddNewtonsoftJson(options =>
                                                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -89,6 +89,11 @@ namespace BankingApp.API
                             ClockSkew = TimeSpan.Zero
                         };
                     });
+
+            services.AddAuthorization(options => {
+                    options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
+                    options.AddPolicy("LoanOfficerRole", policy => policy.RequireRole("Admin", "LoanOfficer"));
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

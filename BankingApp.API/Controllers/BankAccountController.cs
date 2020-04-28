@@ -65,7 +65,7 @@ namespace BankingApp.API.Controllers {
             var bankModel = _mapper.Map<BankAccountModel>(bankAccount);
 
             await _repo.Add(bankAccount);
-            return Ok(bankModel);
+            return Ok(bankAccount);
         }
 
         [HttpPostAttribute("freeze/{id}")]
