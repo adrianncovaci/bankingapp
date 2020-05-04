@@ -13,6 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion'; 
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [],
@@ -29,7 +30,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatMenuModule,
     MatGridListModule,
     MatExpansionModule,
-    MatTabsModule
+    MatTabsModule,
+    MatListModule,
   ],
   exports: [
     MatToolbarModule,
@@ -43,7 +45,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatMenuModule,
     MatGridListModule,
     MatExpansionModule,
-    MatTabsModule
+    MatTabsModule,
+    MatListModule,
   ]
 })
 export class MaterialModule { }

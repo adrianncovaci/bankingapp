@@ -20,6 +20,9 @@ namespace BankingApp.Domain.EFMapping {
             builder.Property(o => o.DateIssued)
                 .HasDefaultValue(DateTime.Now)
                 .IsRequired();
+
+            builder.Property(o => o.TransactionType)
+                .IsRequired();
         }
     }
 }

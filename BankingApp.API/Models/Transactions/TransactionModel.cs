@@ -10,5 +10,6 @@ namespace BankingApp.API.Models.Transactions {
         public int? ReceiverAccountId { get; set; }
         public int ReceiverCustomerId { get; set; }
         public string Message { get; set; }
+        public string TransactionType { get; set; }
     }
 }

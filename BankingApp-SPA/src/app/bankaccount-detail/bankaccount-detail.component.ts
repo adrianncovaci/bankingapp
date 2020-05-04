@@ -5,6 +5,8 @@ import { AlertifyService } from '../_services/alertify.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TransferService } from '../_services/transfer.service';
+import { Transaction } from '../_models/transaction';
+import { error } from 'protractor';
 
 @Component({
   selector: 'app-bankaccount-detail',
@@ -18,7 +20,7 @@ export class BankaccountDetailComponent implements OnInit {
   withdrawForm: FormGroup;
   transferForm: FormGroup;
   bankAccount: Bankaccount;
-  accId: number;
+  transactions: Transaction[];
 
   constructor(private bankAcc: BankaccountsService, private alertify: AlertifyService,
               private route: ActivatedRoute, private transferService: TransferService, 
@@ -27,6 +29,7 @@ export class BankaccountDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBankAccount();
+    this.getTransactionsByUser();
     this.depositForm = this.fbDeposit.group({
       amount: ['', [
         Validators.required,
@@ -48,7 +51,7 @@ export class BankaccountDetailComponent implements OnInit {
         Validators.required,
         Validators.min(0),
         Validators.pattern("^[0-9]*$"),
-        ]
+      ]
       ],
       receiver: ['', [
         Validators.required
@@ -58,19 +61,19 @@ export class BankaccountDetailComponent implements OnInit {
       ]]
     });
   }
-
+  
   get t() {
     return this.transferForm.controls;
   }
-
+  
   get d() {
     return this.depositForm.controls;
   }
-
+  
   get w() {
     return this.withdrawForm.controls;
   }
-
+  
   loadBankAccount() {
     this.bankAcc.getBankAccount(+this.route.snapshot.params['id']).subscribe(acc => {
       this.bankAccount = acc;
@@ -79,13 +82,30 @@ export class BankaccountDetailComponent implements OnInit {
     }
     );
   }
+
+  getTransactionsByUser() {
+    this.transferService.getTransactionsByUser(+this.route.snapshot.params['id']).subscribe(transactions => {
+      this.transactions = transactions; 
+    }, 
+    error => {
+      this.alertify.error(error);
+    })
+  }
   
+  // getTransactionReceiverUsers() {
+  //   this.transactions.forEach(el => {
+  //     if (el.receiverAccountId != null) {
+  //       this.bankAccS
+  //     }
+  //   })
+  // }
+
   deposit() {
     this.model = {
       senderAccountId: this.bankAccount.id,
       amount: this.depositForm.get('amount').value
     };
-
+    
     this.transferService.deposit(this.model).subscribe(next => {
       this.alertify.success("Successfully deposited");
     },
@@ -133,4 +153,5 @@ export class BankaccountDetailComponent implements OnInit {
       this.router.navigate([''])
     })
   }
+
 }

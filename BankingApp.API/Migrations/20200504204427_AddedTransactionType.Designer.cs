@@ -4,14 +4,16 @@ using BankingApp.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankingApp.API.Migrations
 {
     [DbContext(typeof(BankContext))]
-    partial class BankContextModelSnapshot : ModelSnapshot
+    [Migration("20200504204427_AddedTransactionType")]
+    partial class AddedTransactionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,7 +73,7 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("LastDeposit")
                         .HasColumnType("datetime2");
@@ -112,7 +114,7 @@ namespace BankingApp.API.Migrations
                         .HasMaxLength(3);
 
                     b.Property<decimal?>("InitialInterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("MaintenanceFee")
                         .HasColumnType("decimal(18,2)");
@@ -222,7 +224,7 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("LoanTypeId")
                         .HasColumnType("int");

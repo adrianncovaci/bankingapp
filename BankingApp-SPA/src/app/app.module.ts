@@ -23,6 +23,7 @@ import { AccountTypeResolver } from './_resolvers/account-type.resolver';
 import { RouterModule } from '@angular/router';
 import { BankaccountCreateComponent } from './bankaccount-create/bankaccount-create.component';
 import { BankaccountDetailComponent } from './bankaccount-detail/bankaccount-detail.component';
+import { TransactionListComponent } from './transaction-list/transaction-list.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -40,7 +41,8 @@ export function tokenGetter() {
     BankaccountCardComponent,
     HomeComponent,
     BankaccountCreateComponent,
-    BankaccountDetailComponent
+    BankaccountDetailComponent,
+    TransactionListComponent
   ],
   imports: [
     BrowserModule,

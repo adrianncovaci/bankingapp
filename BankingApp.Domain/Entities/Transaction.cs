@@ -10,5 +10,13 @@ namespace BankingApp.Domain.Entities {
         public int? ReceiverAccountId { get; set; }
         public BankAccount ReceiverAccount { get; set; }
         public string Message { get; set; }
+
+        public string TransactionType { get; set; }
+    }
+
+    public enum TransactionType {
+        Withdrawal,
+        Deposit,
+        Transfer,
     }
 }

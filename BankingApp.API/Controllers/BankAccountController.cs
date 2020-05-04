@@ -110,6 +110,7 @@ namespace BankingApp.API.Controllers {
         [HttpPostAttribute("deposit/")]
         public async Task<IActionResult> Deposit([FromBodyAttribute]DepositWithdrawalModel model) {
             var transactionModel = await _serv.Deposit(model);
+            transactionModel.TransactionType = Enum.GetName(typeof(TransactionType), TransactionType.Deposit);
             var transaction = await _serv.CreateTransaction(transactionModel);
             return Ok();
         }
@@ -117,6 +118,7 @@ namespace BankingApp.API.Controllers {
         [HttpPostAttribute("withdraw/")]
         public async Task<IActionResult> Withdraw([FromBodyAttribute]DepositWithdrawalModel model) {
             var transactionModel = await _serv.Withdraw(model);
+            transactionModel.TransactionType = Enum.GetName(typeof(TransactionType), TransactionType.Withdrawal);
             var transaction = await _serv.CreateTransaction(transactionModel);
             return Ok();
         }
@@ -127,8 +129,9 @@ namespace BankingApp.API.Controllers {
             var receiver = receiverList.FirstOrDefault();
             model.ReceiverAccountId = receiver.Id;
             await _serv.Transfer(model);
+            model.TransactionType = Enum.GetName(typeof(TransactionType), TransactionType.Transfer);
             var transaction = await _serv.CreateTransaction(model);
-            return Ok(transaction);
+            return Ok(model);
         }
     }
 }
