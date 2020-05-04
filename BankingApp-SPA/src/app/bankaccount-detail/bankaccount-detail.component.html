@@ -1,0 +1,66 @@
+<mat-tab-group mat-align-tabs="center" animationDuration="0ms">
+    <mat-tab label="Deposit">
+            <form [formGroup]="depositForm" (ngSubmit)="deposit()">
+                <mat-form-field>
+                    <input matInput placeholder="Amount" formControlName="amount">
+                    <mat-error *ngIf="d.amount.invalid && d.amount.touched">
+                        Please provide a valid amount.
+                    </mat-error>
+                </mat-form-field>
+
+                <button class = "form-field" type="submit" mat-raised-button color="primary">
+                    Deposit
+                </button>
+            </form>
+    </mat-tab>
+    <mat-tab label="Withdraw">
+        
+        <form [formGroup]="withdrawForm" (ngSubmit)="withdraw()">
+            <mat-form-field>
+                <input matInput placeholder="Amount" formControlName="amount">
+                <mat-error *ngIf="w.amount.invalid && w.amount.touched">
+                    Please provide a valid amount.
+                </mat-error>
+            </mat-form-field>
+
+            <button class = "form-field" type="submit" mat-raised-button color="primary">
+                Withdraw
+            </button>
+        </form>
+
+    </mat-tab>
+    <mat-tab label="Transfer">
+        
+        <form [formGroup]="transferForm" (ngSubmit)="transfer()">
+            <mat-form-field>
+                <input matInput placeholder="Amount" formControlName="amount">
+                <mat-error *ngIf="t.amount.invalid && t.amount.touched">
+                    Please provide a valid amount.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Receiver" formControlName="receiver">
+                <mat-error *ngIf="t.receiver.invalid && t.receivertouched">
+                    Please provide a valid amount.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <textarea matInput placeholder="Message"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="5"
+                formControlName="message"></textarea>
+                <mat-error *ngIf="t.message.invalid">
+                    256 characters maximum.
+                </mat-error>
+            </mat-form-field>
+
+            <button class = "form-field" type="submit" mat-raised-button color="primary">
+               Transfer 
+            </button>
+        </form>
+    </mat-tab>
+</mat-tab-group>

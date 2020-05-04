@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AlertifyService } from '../_services/alertify.service';
+import { TransferService } from '../_services/transfer.service';
 
 @Component({
   selector: 'app-transfer',
@@ -7,20 +11,10 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./transfer.component.css']
 })
 export class TransferComponent implements OnInit {
-  values: any;
-
-  constructor(private http: HttpClient) {}
+    constructor(private fb: FormBuilder, private alertify: AlertifyService, private router: Router,
+              private transfer_service: TransferService) {}
 
   ngOnInit(): void {
-    this.getValues();
+    
   }
-
-  getValues() {
-    this.http.get('http://localhost:5000/transfer').subscribe(response => {
-      this.values = response;
-    }), error => {
-      console.log(error);
-    };
-  }
-
 }

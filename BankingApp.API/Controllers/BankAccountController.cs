@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using BankingApp.API.Helpers.BankAccount;
 using BankingApp.API.Helpers;
 using BankingApp.API.Models.Transactions;
+using System.Linq;
 
 namespace BankingApp.API.Controllers {
     [AuthorizeAttribute]
@@ -51,10 +52,18 @@ namespace BankingApp.API.Controllers {
 
         [HttpGetAttribute]
         public async Task<IActionResult> GetBankAccountsByUser() {
-            var customerId = Int32.Parse(User.Identity.Name);
-            var bankAccs = await _repo.GetWithWhere<BankAccount>(x => x.CustomerId == customerId);
+            var userId = Int32.Parse(User.Identity.Name);
+            var customers = await _repo.GetWithWhere<Customer>(x => x.UserId == userId); 
+            var customer = customers.FirstOrDefault();
+            var bankAccs = await _repo.GetWithWhere<BankAccount>(x => x.CustomerId == customer.Id);
             var models = _mapper.Map<IList<BankAccountModel>>(bankAccs);
             return Ok(bankAccs);
+        }
+
+        [HttpGetAttribute("types")]
+        public async Task<IActionResult> GetBankAccountTypes() {
+            var types = await _repo.GetAll<BankAccountType>();
+            return Ok(types);
         }
 
         [HttpPostAttribute]
@@ -114,6 +123,9 @@ namespace BankingApp.API.Controllers {
 
         [HttpPostAttribute("transfer/")]
         public async Task<IActionResult> Transfer([FromBodyAttribute]TransactionModel model) {
+            var receiverList = await _repo.GetWithWhere<BankAccount>(o => o.AccountNumber == model.ReceiverAccountName);
+            var receiver = receiverList.FirstOrDefault();
+            model.ReceiverAccountId = receiver.Id;
             await _serv.Transfer(model);
             var transaction = await _serv.CreateTransaction(model);
             return Ok(transaction);

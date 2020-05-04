@@ -10,8 +10,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
-
-
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatExpansionModule } from '@angular/material/expansion'; 
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [],
@@ -25,7 +26,10 @@ import { MatMenuModule } from '@angular/material/menu';
     MatCheckboxModule,
     MatChipsModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    MatGridListModule,
+    MatExpansionModule,
+    MatTabsModule
   ],
   exports: [
     MatToolbarModule,
@@ -36,7 +40,10 @@ import { MatMenuModule } from '@angular/material/menu';
     MatCheckboxModule,
     MatChipsModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    MatGridListModule,
+    MatExpansionModule,
+    MatTabsModule
   ]
 })
 export class MaterialModule { }

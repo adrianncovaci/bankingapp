@@ -1,0 +1,14 @@
+mat-form-field {
+    display: block;
+    margin-top:2em;
+}
+
+form {
+    width: 30%;
+    margin: 0 auto;
+
+}
+.sbmt-btn {
+    display: block;
+    margin: 0 auto;
+}

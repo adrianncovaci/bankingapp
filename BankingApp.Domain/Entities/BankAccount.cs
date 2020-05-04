@@ -11,8 +11,6 @@ namespace BankingApp.Domain.Entities {
         public DateTime DateCreated { get; protected set; } = DateTime.Now;
         public DateTime? LastDeposit { get;  set; }
         public int? Period { get; set; }
-
-
         public BankAccountStatus BankAccountStatus { get; set; }
 
         public int AccountTypeId { get; set; }
