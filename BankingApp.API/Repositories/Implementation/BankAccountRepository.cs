@@ -22,8 +22,7 @@ namespace BankingApp.API.Repositories {
         public async Task<BankAccount> CreateAccount(CreateBankAccountModel model, string customerId)
         {
             var user = await _userManager.FindByIdAsync(customerId);
-            var customers = await _repo.GetWithWhere<Customer>(o => o.UserId == user.Id);
-            var customer = customers.FirstOrDefault();
+            var customer = await _repo.GetWithWhere<Customer>(o => o.UserId == user.Id);
             var bankAccountType = await _repo.GetById<BankAccountType>(model.AccountType);
 
             if (customer == null || bankAccountType == null)

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Bankaccount } from '../_models/bankaccount';
-import { BankaccountsService } from '../_services/bankaccounts.service';
-import { AlertifyService } from '../_services/alertify.service';
+import { Bankaccount } from '../../_models/bankaccount';
+import { BankaccountsService } from '../../_services/bankaccounts.service';
+import { AlertifyService } from '../../_services/alertify.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { TransferService } from '../_services/transfer.service';
-import { Transaction } from '../_models/transaction';
+import { TransferService } from '../../_services/transfer.service';
+import { Transaction } from '../../_models/transaction';
 import { error } from 'protractor';
 
 @Component({
@@ -91,14 +91,6 @@ export class BankaccountDetailComponent implements OnInit {
       this.alertify.error(error);
     })
   }
-  
-  // getTransactionReceiverUsers() {
-  //   this.transactions.forEach(el => {
-  //     if (el.receiverAccountId != null) {
-  //       this.bankAccS
-  //     }
-  //   })
-  // }
 
   deposit() {
     this.model = {

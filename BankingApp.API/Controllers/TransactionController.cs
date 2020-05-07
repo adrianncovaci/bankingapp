@@ -23,7 +23,7 @@ namespace BankingApp.API.Controllers {
         [HttpGetAttribute("transactions/{id}")]
         public async Task<IActionResult> GetTransactionsByUser(int id) {
             var acc = await _repo.GetById<BankAccount>(id);
-            var transactions = await _repo.GetWithWhere<Transaction>(o => o.SenderAccountId == acc.Id);
+            var transactions = await _repo.GetWithWhereList<Transaction>(o => o.SenderAccountId == acc.Id);
             return Ok(transactions); 
         }
     }

@@ -7,7 +7,10 @@ namespace BankingApp.API.Profiles {
     public class LoanProfile: Profile {
         public LoanProfile() {
             CreateMap<LoanRequest, LoanRequestModel>()
-                .ForMember(x => x.CustomerId , y => y.MapFrom(z => z.Customer.Id));
+                .ForMember(x => x.CustomerName , y => y.MapFrom(z => z.Customer.CNP));
+
+            CreateMap<Loan, LoanModel>();
+            CreateMap<LoanModel, Loan>();
             CreateMap<LoanRequestModel, LoanRequest>();
             CreateMap<LoanRequestAction, EvaluateLoanRequestModel>();
             CreateMap<EvaluateLoanRequestModel, LoanRequestAction>();

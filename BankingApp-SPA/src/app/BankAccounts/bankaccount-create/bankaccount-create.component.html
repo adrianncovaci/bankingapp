@@ -10,9 +10,11 @@
                  <mat-form-field class = "form-el">
                     <mat-label>Account Type</mat-label>
                     <mat-select formControlName="accountType">
-                        <mat-option *ngFor="let val of accountTypes" [value] = 'val.id'>
-                            {{ val.accountType }}
-                        </mat-option>
+                        <div *ngFor="let val of accountTypes">
+                            <mat-option *ngIf='val.accountType !== "Loans"' [value] = 'val.id'>
+                                {{ val.accountType }}
+                            </mat-option>
+                        </div>
                     </mat-select>
                     <mat-error *ngIf='f.accountType.invalid && f.accountType.touched'>
                         Please provide a valid type.

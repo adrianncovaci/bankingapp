@@ -1,3 +1,5 @@
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+<h2 class="mat-h2">Accounts</h2>
 <mat-accordion>
     <mat-expansion-panel *ngFor="let element of accountMap | keyvalue">
         <mat-expansion-panel-header>
@@ -22,7 +24,6 @@
                 </mat-card-content>
                 <mat-card-actions>
                     <button routerLink="{{ account.id }}" mat-button>Manage</button>
-                    <button mat-button>History</button>
                 </mat-card-actions>
             </mat-card>
         </div>
@@ -30,4 +31,4 @@
 </mat-accordion>
 
 <button routerLink="openaccount" mat-button>Open Up a Bank Account</button>
-<button mat-button>Apply for a loan</button>
+<button routerLink="applyloan" mat-button>Apply for a loan</button>

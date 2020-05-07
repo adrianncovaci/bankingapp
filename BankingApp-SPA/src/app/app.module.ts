@@ -14,16 +14,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { FooterComponent } from './footer/footer.component';
 import { AuthService } from './_services/auth.service';
 import { RegisterComponent } from './register/register.component';
-import { BankaccountListComponent } from './bankaccount-list/bankaccount-list.component';
-import { BankaccountCardComponent } from './bankaccount-card/bankaccount-card.component';
+import { BankaccountListComponent } from './BankAccounts/bankaccount-list/bankaccount-list.component';
+import { BankaccountCardComponent } from './BankAccounts/bankaccount-card/bankaccount-card.component';
 import { HomeComponent } from './home/home.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AccountListResolver } from './_resolvers/account-list.resolver';
 import { AccountTypeResolver } from './_resolvers/account-type.resolver';
 import { RouterModule } from '@angular/router';
-import { BankaccountCreateComponent } from './bankaccount-create/bankaccount-create.component';
-import { BankaccountDetailComponent } from './bankaccount-detail/bankaccount-detail.component';
+import { BankaccountCreateComponent } from './BankAccounts/bankaccount-create/bankaccount-create.component';
+import { BankaccountDetailComponent } from './BankAccounts/bankaccount-detail/bankaccount-detail.component';
 import { TransactionListComponent } from './transaction-list/transaction-list.component';
+import { LoanApplyComponent } from './loan-apply/loan-apply.component';
+import { LoanRequestsListComponent } from './loan-requests-list/loan-requests-list.component';
+import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
+import { ExchangeRateComponent } from './exchange-rate/exchange-rate.component';
+import { ExchangeRateResolver } from './_resolvers/exchange-rate.resolver';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -42,7 +47,10 @@ export function tokenGetter() {
     HomeComponent,
     BankaccountCreateComponent,
     BankaccountDetailComponent,
-    TransactionListComponent
+    TransactionListComponent,
+    LoanApplyComponent,
+    LoanRequestsListComponent,
+    ExchangeRateComponent
   ],
   imports: [
     BrowserModule,
@@ -63,6 +71,8 @@ export function tokenGetter() {
       AuthService,
       AccountListResolver,
       AccountTypeResolver,
+      LoanRequestsResolver,
+      ExchangeRateResolver,
   ],
   bootstrap: [AppComponent]
 })

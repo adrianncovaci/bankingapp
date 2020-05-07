@@ -1,14 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Bankaccount } from '../_models/bankaccount';
-import { AlertifyService } from '../_services/alertify.service';
-import { BankaccountsService } from '../_services/bankaccounts.service';
-import { BankAccountTypes } from '../_models/bankaccounttypes';
+import { Bankaccount } from '../../_models/bankaccount';
+import { AlertifyService } from '../../_services/alertify.service';
+import { BankaccountsService } from '../../_services/bankaccounts.service';
+import { BankAccountTypes } from '../../_models/bankaccounttypes';
 import { ActivatedRoute } from '@angular/router';
-
-interface Node {
-  name: string;
-  children?: Bankaccount[];
-}
 
 @Component({
   selector: 'app-bankaccount-list',

@@ -12,6 +12,10 @@ export class TransferService {
 
   constructor(private http: HttpClient) { }
 
+  getExchangeRate() {
+    return this.http.get(this.baseUrl + 'bankaccount/rates');
+  }
+
   withdraw(model: any) {
     return this.http.post(this.baseUrl + 'bankaccount/withdraw', model);
   }

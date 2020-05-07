@@ -23,28 +23,28 @@ namespace BankingApp.Domain.EFMapping {
                     Id = 1,
                     InterestRate = 0.03m,
                     Period = 180,
-                    FixedRate = false,
+                    FixedRate = true,
                     LoanTypeId = 1,
                 },
                 new Loan {
                     Id = 2,
                     InterestRate = 0.0355m,
                     Period = 360,
-                    FixedRate = false,
+                    FixedRate = true,
                     LoanTypeId = 1,
                 },
                 new Loan {
                     Id = 3,
                     InterestRate = 0.0435m,
                     Period = 48,
-                    FixedRate = true,
+                    FixedRate = false,
                     LoanTypeId = 3,
                 },
                 new Loan {
                     Id = 4,
                     InterestRate = 0.0437m,
                     Period = 60,
-                    FixedRate = true,
+                    FixedRate = false, 
                     LoanTypeId = 3,
                 }
             );

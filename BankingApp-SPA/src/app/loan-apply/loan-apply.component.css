@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  /* align-items: center; */
+  height:100%;
+}
+
+mat-card {
+  margin: 1em;
+  width: 300px;
+  height: 35%;
+}
+
+mat-form-field {
+    display: block;
+}

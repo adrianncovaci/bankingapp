@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Bankaccount } from '../_models/bankaccount';
+import { Bankaccount } from '../../_models/bankaccount';
 
 @Component({
   selector: 'app-bankaccount-card',

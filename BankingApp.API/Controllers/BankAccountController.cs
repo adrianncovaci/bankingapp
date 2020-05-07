@@ -1,6 +1,4 @@
 using System;
-using Microsoft.EntityFrameworkCore;
-using BankingApp.Domain.EFMapping;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -10,13 +8,15 @@ using BankingApp.Domain.Entities;
 using BankingApp.API.Models.BankAccounts;
 using BankingApp.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using BankingApp.API.Helpers.BankAccount;
 using BankingApp.API.Helpers;
 using BankingApp.API.Models.Transactions;
-using System.Linq;
+using BankingApp.API.Infrastructure.Configurations;
+using Microsoft.Extensions.Options;
+using System.Net.Http;
+using Newtonsoft.Json;
 
-namespace BankingApp.API.Controllers {
+namespace BankingApp.API.Controllers
+{
     [AuthorizeAttribute]
     [ApiControllerAttribute]
     [Route("[controller]")]
@@ -26,13 +26,34 @@ namespace BankingApp.API.Controllers {
         private readonly IMapper _mapper;
         private readonly ITransactionRepository _serv;
         private readonly IBankAccountRepository _bankRepo;
+        private readonly ExchangeRate _exchangeRate;
+        private readonly IHttpClientFactory _httpClient;
 
         public BankAccountController(IRepository repo, IBankAccountRepository bankRepo,
-                                     IMapper mapper, ITransactionRepository serv) {
+                                     IMapper mapper, ITransactionRepository serv, IOptions<ExchangeRate> rate,
+                                     IHttpClientFactory client) {
             _repo = repo;
             _mapper = mapper;
             _serv = serv;
             _bankRepo = bankRepo;
+            _exchangeRate = rate.Value;
+            _httpClient = client;
+        }
+
+        [HttpGetAttribute("rates")]
+        public async Task<IActionResult> GetExchangeRate() {
+            var key = _exchangeRate.AccessKey;
+            var request = $"http://data.fixer.io/api/latest?access_key={key}&symbols=RON,USD,RUB,GBP,UAH";
+            var client = _httpClient.CreateClient();
+            var response = await client.GetAsync(request);
+            
+            if (response.IsSuccessStatusCode) {
+                string jsonData = await response.Content.ReadAsStringAsync();
+                var model = JsonConvert.DeserializeObject<ExchangeModel>(jsonData);
+                return Ok(model);
+            }
+
+            return BadRequest();
         }
 
         [Authorize(Roles = "Admin")]
@@ -53,9 +74,8 @@ namespace BankingApp.API.Controllers {
         [HttpGetAttribute]
         public async Task<IActionResult> GetBankAccountsByUser() {
             var userId = Int32.Parse(User.Identity.Name);
-            var customers = await _repo.GetWithWhere<Customer>(x => x.UserId == userId); 
-            var customer = customers.FirstOrDefault();
-            var bankAccs = await _repo.GetWithWhere<BankAccount>(x => x.CustomerId == customer.Id);
+            var customer = await _repo.GetWithWhere<Customer>(x => x.UserId == userId); 
+            var bankAccs = await _repo.GetWithWhereList<BankAccount>(x => x.CustomerId == customer.Id);
             var models = _mapper.Map<IList<BankAccountModel>>(bankAccs);
             return Ok(bankAccs);
         }
@@ -125,8 +145,7 @@ namespace BankingApp.API.Controllers {
 
         [HttpPostAttribute("transfer/")]
         public async Task<IActionResult> Transfer([FromBodyAttribute]TransactionModel model) {
-            var receiverList = await _repo.GetWithWhere<BankAccount>(o => o.AccountNumber == model.ReceiverAccountName);
-            var receiver = receiverList.FirstOrDefault();
+            var receiver = await _repo.GetWithWhere<BankAccount>(o => o.AccountNumber == model.ReceiverAccountName);
             model.ReceiverAccountId = receiver.Id;
             await _serv.Transfer(model);
             model.TransactionType = Enum.GetName(typeof(TransactionType), TransactionType.Transfer);

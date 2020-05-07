@@ -26,6 +26,8 @@ using BankingApp.API.Repositories.Interfaces;
 using BankingApp.API.Infrastructure.Middleware;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Identity;
+using BankingApp.API.Infrastructure.Configurations;
+using BankingApp.API.Controllers;
 // using Swashbuckle.Swagger;
 
 namespace BankingApp.API
@@ -71,6 +73,12 @@ namespace BankingApp.API
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            var keysConfig = Configuration.GetSection("ExchangeRate");
+            services.Configure<ExchangeRate>(keysConfig);
+
+            services.AddHttpClient();
+
+
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             services.AddAuthentication(x => {
@@ -94,6 +102,7 @@ namespace BankingApp.API
                     options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
                     options.AddPolicy("LoanOfficerRole", policy => policy.RequireRole("Admin", "LoanOfficer"));
                 });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

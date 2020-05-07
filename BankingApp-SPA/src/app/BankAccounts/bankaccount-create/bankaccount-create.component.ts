@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { BankaccountsService } from '../_services/bankaccounts.service';
-import { AlertifyService } from '../_services/alertify.service';
-import { BankAccountTypes } from '../_models/bankaccounttypes';
+import { BankaccountsService } from '../../_services/bankaccounts.service';
+import { AlertifyService } from '../../_services/alertify.service';
+import { BankAccountTypes } from '../../_models/bankaccounttypes';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

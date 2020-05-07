@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" mat-elevation-z8>
     <a routerLink="/">
-        <mat-icon>account_balance_wallet</mat-icon>
+        <mat-icon>account_balance</mat-icon>
     </a>
 
     <div class = "spacer">
@@ -15,6 +15,10 @@
             <button mat-menu-item routerLink = "/">
                 <mat-icon>home</mat-icon>
                 Home
+            </button>
+            <button mat-menu-item routerLink = "/loanrequests">
+                <mat-icon>account_balance_wallet</mat-icon>
+                Loan Requests
             </button>
             <button mat-menu-item (click)="logOut()">
                 <mat-icon>exit_to_app</mat-icon>

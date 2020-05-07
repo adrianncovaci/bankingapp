@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -28,13 +29,28 @@ namespace BankingApp.API.Controllers {
         [HttpPostAttribute("request/")]
         public async Task<IActionResult> RequestLoan([FromBody]LoanRequestModel model) {
             var userId = Int32.Parse(User.Identity.Name);
-            var customers = await _repo.GetWithWhere<Customer>(o => o.UserId == userId);
-            var customer = customers.FirstOrDefault();
+            var customer = await _repo.GetWithWhere<Customer>(o => o.UserId == userId);
             model.CustomerId = customer.Id;
             var loanRequest = _mapper.Map<LoanRequest>(model);
             loanRequest.Status = LoanRequestStatus.Pending;
             await _repo.Add(loanRequest);
             return Ok(loanRequest);
+        }
+
+        [HttpGetAttribute("requests/")]
+        public async Task<IActionResult> GetLoanRequestsByCurrentUser() {
+            var userId = Int32.Parse(User.Identity.Name);
+            var customer = await _repo.GetWithWhere<Customer>(o => o.UserId == userId);
+            var loanRequests = await _repo.GetWithWhereList<LoanRequest>(o => o.CustomerId == customer.Id);
+            var models = _mapper.Map<IList<LoanRequestModel>>(loanRequests);
+
+            
+
+            // foreach(var model in models) {
+            //     model.CustomerName = $"{customer.FirstName} {customer.FirstName}";
+            // }
+
+            return Ok(models); 
         }
 
         [AuthorizeAttribute(Policy = "LoanOfficerRole")]
@@ -52,7 +68,7 @@ namespace BankingApp.API.Controllers {
             return Ok(requestAction);
         }
 
-        [HttpPostAttribute("acceot/{id}")]
+        [HttpPostAttribute("accept/{id}")]
         public async Task<IActionResult> AcceptLoanRequest(int id) {
             var loanRequest = await _repo.GetById<LoanRequest>(id);
 
@@ -68,8 +84,7 @@ namespace BankingApp.API.Controllers {
 
         public async Task<LoanRequestAction> EvaluateLoanRequest(int id, ActionType action) {
             var userId = await Task.FromResult<int>(Int32.Parse(User.Identity.Name));
-            var officers = await _repo.GetWithWhere<LoanOfficer>(o => o.UserId == userId);
-            var officer = officers.FirstOrDefault();
+            var officer = await _repo.GetWithWhere<LoanOfficer>(o => o.UserId == userId);
             var model = new EvaluateLoanRequestModel() {
                 LoanOfficerId = officer.Id,
                 LoanRequestId = id,
@@ -77,6 +92,21 @@ namespace BankingApp.API.Controllers {
             };
             var requestAction = _mapper.Map<LoanRequestAction>(model);
             return requestAction;
+        }
+
+        [HttpGetAttribute("loans")]
+        public async Task<IActionResult> GetLoans() {
+            var loans = await _repo.GetAll<Loan>();
+            var models = _mapper.Map<IList<LoanModel>>(loans);
+            var types = await _repo.GetAll<LoanType>();
+            foreach(var model in models) {
+                foreach(var type in types)
+                    if (model.LoanTypeId == type.Id) {
+                        model.Type = type.Type;
+                        break;
+                    }
+            }
+            return Ok(models);
         }
 
 
