@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BankingApp.API.Helpers;
+using BankingApp.API.Infrastructure.Extensions;
 using BankingApp.API.Models.Loans;
+using BankingApp.API.Models.Pagination;
 using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -43,14 +45,15 @@ namespace BankingApp.API.Controllers {
             var customer = await _repo.GetWithWhere<Customer>(o => o.UserId == userId);
             var loanRequests = await _repo.GetWithWhereList<LoanRequest>(o => o.CustomerId == customer.Id);
             var models = _mapper.Map<IList<LoanRequestModel>>(loanRequests);
-
-            
-
-            // foreach(var model in models) {
-            //     model.CustomerName = $"{customer.FirstName} {customer.FirstName}";
-            // }
-
             return Ok(models); 
+        }
+
+        [HttpPostAttribute("allrequests")]
+        public async Task<IActionResult> GetAllLoanRequests([FromBody] PagedRequest request) {
+            // var loans = await _repo.GetWithInclude<LoanRequest>(cnp => cnp.Customer);
+            // var models = _mapper.Map<IList<LoanRequestModel>>(loans);
+            var models = await _repo.GetPagedResponse<LoanRequest, LoanRequestModel>(request);
+            return Ok(models);
         }
 
         [AuthorizeAttribute(Policy = "LoanOfficerRole")]
@@ -65,7 +68,7 @@ namespace BankingApp.API.Controllers {
             loanRequest.Status = LoanRequestStatus.Declined;
             var requestAction = await EvaluateLoanRequest(id, ActionType.Reject);
             await _repo.Add(requestAction);
-            return Ok(requestAction);
+            return Ok();
         }
 
         [HttpPostAttribute("accept/{id}")]
@@ -96,16 +99,8 @@ namespace BankingApp.API.Controllers {
 
         [HttpGetAttribute("loans")]
         public async Task<IActionResult> GetLoans() {
-            var loans = await _repo.GetAll<Loan>();
+            var loans = await _repo.GetWithInclude<Loan>(o => o.LoanType);
             var models = _mapper.Map<IList<LoanModel>>(loans);
-            var types = await _repo.GetAll<LoanType>();
-            foreach(var model in models) {
-                foreach(var type in types)
-                    if (model.LoanTypeId == type.Id) {
-                        model.Type = type.Type;
-                        break;
-                    }
-            }
             return Ok(models);
         }
 

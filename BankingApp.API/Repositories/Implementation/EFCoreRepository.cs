@@ -8,6 +8,8 @@ using BankingApp.API.Helpers;
 using System;
 using System.Linq.Expressions;
 using System.Linq;
+using BankingApp.API.Models.Pagination;
+using BankingApp.API.Infrastructure.Extensions;
 
 namespace BankingApp.API.Repositories {
     public class EFCoreRepository : IRepository
@@ -29,10 +31,10 @@ namespace BankingApp.API.Repositories {
         {
             return await _context.FindAsync<T>(id);
         }
-        public async Task<T> GetByIdWithInclude<T>(int id, params Expression<Func<T, object>>[] props) where T : BaseEntity
+        public async Task<List<T>> GetWithInclude<T>(params Expression<Func<T, object>>[] props) where T : BaseEntity
         {
             var query = IncludeProperties(props);
-            return await query.FirstOrDefaultAsync(o => o.Id == id);
+            return await query.ToListAsync();
         }
 
         public async Task<T> Add<T>(T entity) where T : BaseEntity
@@ -93,6 +95,13 @@ namespace BankingApp.API.Repositories {
                 entities = entities.Include(prop);
             }
             return entities;
+        }
+
+        public async Task<PagedResponse<TModel>> GetPagedResponse<T, TModel>(PagedRequest request)
+            where T : BaseEntity
+            where TModel : class
+        {
+            return await _context.Set<T>().CreatePaginatedResultAsync<T, TModel>(request, _mapper);
         }
     }
 }

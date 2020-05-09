@@ -3,6 +3,7 @@ using BankingApp.Domain.Entities;
 
 namespace BankingApp.API.Models.Loans {
     public class LoanRequestModel {
+        public int Id { get; set; }
         public int LoanId { get; set; }
         public string LoanName { get; set; }
         public int CustomerId { get; set; }

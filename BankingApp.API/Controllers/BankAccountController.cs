@@ -40,7 +40,9 @@ namespace BankingApp.API.Controllers
             _httpClient = client;
         }
 
+
         [HttpGetAttribute("rates")]
+        [ResponseCache(Duration=86400)]
         public async Task<IActionResult> GetExchangeRate() {
             var key = _exchangeRate.AccessKey;
             var request = $"http://data.fixer.io/api/latest?access_key={key}&symbols=RON,USD,RUB,GBP,UAH";

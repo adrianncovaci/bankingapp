@@ -5,6 +5,8 @@ import { LoanType } from '../_models/loan-type';
 import { Observable } from 'rxjs';
 import { Transaction } from '../_models/transaction';
 import { LoanRequest } from '../_models/loan-request';
+import { PaginatedRequest } from '../_models/pagination/paginated-request';
+import { PagedResult } from '../_models/pagination/paged-result';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +26,17 @@ export class LoanService {
 
   getLoanRequestsByCurrentUser(): Observable<LoanRequest[]> {
     return this.http.get<LoanRequest[]>(this.baseUrl + 'loan/requests');
+  }
+
+  getAllLoanRequests(pagedRequest: PaginatedRequest): Observable<PagedResult<LoanRequest>> {
+    return this.http.post<PagedResult<LoanRequest>>(this.baseUrl + 'loan/allrequests', pagedRequest);
+  }
+
+  acceptLoanRequest(id: number): Observable<LoanRequest> {
+    return this.http.post<LoanRequest>(this.baseUrl + 'loan/accept/' + id, {});
+  }
+
+  rejectLoanRequest(id: number): Observable<LoanRequest> {
+    return this.http.post<LoanRequest>(this.baseUrl + 'loan/reject/' + id, {});
   }
 }

@@ -14,6 +14,8 @@ import { LoanApplyComponent } from './loan-apply/loan-apply.component';
 import { LoanRequestsListComponent } from './loan-requests-list/loan-requests-list.component';
 import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
 import { ExchangeRateResolver } from './_resolvers/exchange-rate.resolver';
+import { OfficerPanelComponent } from './loan_officer/officer-panel/officer-panel.component';
+import { LoanTypeResolver } from './_resolvers/loan-type.resolver';
 
 const routes: Routes = [
   // { path: '', component: HomeComponent, canActivate: [AuthGuard], 
@@ -27,20 +29,25 @@ const routes: Routes = [
     children: [
       { 
         path: '', component: HomeComponent, 
-        resolve: { bankAccounts: AccountListResolver, bankAccountTypes: AccountTypeResolver, exchangeRate: ExchangeRateResolver}
+        resolve: { bankAccounts: AccountListResolver, bankAccountTypes: AccountTypeResolver, exchangeRate: ExchangeRateResolver},
+        data: { roles: ['Customer'] }
       },
       { 
         path: 'openaccount', component: BankaccountCreateComponent,
-        resolve: { bankAccountTypes: AccountTypeResolver } 
+        resolve: { bankAccountTypes: AccountTypeResolver }, data: { roles: ['Customer'] }
       },
       {
-        path: 'applyloan', component: LoanApplyComponent,
+        path: 'applyloan', component: LoanApplyComponent,  data: { roles: ['Customer'] }
       },
       {
-        path: 'loanrequests', component: LoanRequestsListComponent, resolve: { loanRequests: LoanRequestsResolver }
+        path: 'loanrequests', component: LoanRequestsListComponent, resolve: { loanRequests: LoanRequestsResolver },
+        data: { roles: ['Customer'] }
       },
       {
-        path: ':id', component: BankaccountDetailComponent
+        path: 'officer', component: OfficerPanelComponent, data: { roles: ['Admin', 'LoanOfficer'] }
+      },
+      {
+        path: ':id', component: BankaccountDetailComponent, data: { roles: ['Customer'] }
       },
       ]
   },
@@ -51,7 +58,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'}),
   ],
   exports: [RouterModule]
 })

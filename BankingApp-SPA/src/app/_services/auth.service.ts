@@ -27,6 +27,18 @@ export class AuthService {
         );
     }
 
+    roleMatch(acceptedRoles): boolean {
+      let isMatch = false;
+      const userRoles = this.decodedToken.role as Array<string>;
+      acceptedRoles.forEach(element => {
+        if (userRoles.includes(element)) {
+          isMatch = true;
+          return;
+        }
+      });
+      return isMatch;
+    }
+
     register(model: any) {
         return this.http.post(this.baseUrl + 'register', model);
     }

@@ -28,6 +28,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Identity;
 using BankingApp.API.Infrastructure.Configurations;
 using BankingApp.API.Controllers;
+using Microsoft.AspNetCore.Http;
 // using Swashbuckle.Swagger;
 
 namespace BankingApp.API
@@ -77,6 +78,7 @@ namespace BankingApp.API
             services.Configure<ExchangeRate>(keysConfig);
 
             services.AddHttpClient();
+            services.AddResponseCaching();
 
 
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -129,6 +131,21 @@ namespace BankingApp.API
             app.UseAuthentication();
 
             app.UseAuthorization();
+            
+            app.UseResponseCaching();
+            app.Use(async (context, next) =>
+            {
+                context.Response.GetTypedHeaders().CacheControl = 
+                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                    {
+                        Public = true,
+                        MaxAge = TimeSpan.FromSeconds(86400)
+                    };
+                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = 
+                    new string[] { "Accept-Encoding" };
+
+                await next();
+            });
 
             app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 

@@ -15,6 +15,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort'; 
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [],
@@ -34,6 +36,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTabsModule,
     MatListModule,
     MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
   ],
   exports: [
     MatToolbarModule,
@@ -50,6 +54,8 @@ import { MatTableModule } from '@angular/material/table';
     MatTabsModule,
     MatListModule,
     MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
   ]
 })
 export class MaterialModule { }

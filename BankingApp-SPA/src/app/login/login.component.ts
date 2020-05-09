@@ -46,7 +46,13 @@ export class LoginComponent implements OnInit {
       }, error => {
           this.alertify.error(error);
       }, () => {
-          this.router.navigate(['']);
+          const roles = this.authService.decodedToken.role as Array<string>;
+          if (roles.includes('Customer')) {
+            this.router.navigate(['']);
+          } else {
+              console.log("wazza");
+              this.router.navigate(['/officer'])
+          }
       });
   }
 }

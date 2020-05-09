@@ -16,6 +16,17 @@ export class AuthGuard implements CanActivate {
 
   canActivate(router: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+      const roles = router.firstChild.data['roles'] as Array<string>;
+      if(roles) {
+        const access = this.authService.roleMatch(roles);
+        if (access) {
+          return true;
+        }
+        else {
+          this.router.navigate(['']);
+          this.alertify.error("You can not access this area");
+        }
+      }
       if (this.authService.loggedIn) {
           return true;
       }

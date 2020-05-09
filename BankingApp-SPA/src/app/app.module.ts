@@ -29,6 +29,9 @@ import { LoanRequestsListComponent } from './loan-requests-list/loan-requests-li
 import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
 import { ExchangeRateComponent } from './exchange-rate/exchange-rate.component';
 import { ExchangeRateResolver } from './_resolvers/exchange-rate.resolver';
+import { OfficerPanelComponent } from './loan_officer/officer-panel/officer-panel.component';
+import { HasRolesDirective } from './_directives/has-roles.directive';
+import { LoanTypeResolver } from './_resolvers/loan-type.resolver';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -50,7 +53,9 @@ export function tokenGetter() {
     TransactionListComponent,
     LoanApplyComponent,
     LoanRequestsListComponent,
-    ExchangeRateComponent
+    ExchangeRateComponent,
+    OfficerPanelComponent,
+    HasRolesDirective
   ],
   imports: [
     BrowserModule,
@@ -73,6 +78,7 @@ export function tokenGetter() {
       AccountTypeResolver,
       LoanRequestsResolver,
       ExchangeRateResolver,
+      LoanTypeResolver,
   ],
   bootstrap: [AppComponent]
 })
