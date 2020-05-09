@@ -1,7 +1,7 @@
-import { FilterOperator } from './filter-operator';
+import { FilterOperators } from './filter-operators';
 import { Filter } from './filter';
 
 export interface RequestFilters {
-    logicalOperator: FilterOperator;
+    logicalOperator: FilterOperators;
     filters: Filter[];
 }

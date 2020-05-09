@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
@@ -19,7 +20,7 @@ namespace BankingApp.API.Infrastructure.Extensions {
 
             for(int i = 0 ; i < filters.Filters.Count; i++) {
                 if (i > 0) {
-                    predicate.Append($" {filters.FilterOperators}");
+                    predicate.Append($" {filters.FilterOperators} ");
                 }
                 predicate.Append(filters.Filters[i].Path + $".{nameof(string.Contains)}(@{i})");
             }
@@ -46,7 +47,7 @@ namespace BankingApp.API.Infrastructure.Extensions {
         public async static Task<PagedResponse<TModel>> CreatePaginatedResultAsync<T, TModel>(this IQueryable<T> query, PagedRequest request, IMapper mapper)
         where T: BaseEntity where TModel: class
         {
-            // query = query.ApplyFilters(request);
+            query = query.ApplyFilters(request);
             var count = await query.CountAsync();
             query = query.Paginate(request);
             var projectedResult = query.ProjectTo<TModel>(mapper.ConfigurationProvider);

@@ -1,4 +1,26 @@
-
+  <mat-card class='light' style="">
+    <mat-card-header>
+      <mat-card-title class="view-card-title">
+        <h1>Loan Requests</h1>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <mat-form-field>
+            <mat-placeholder>
+              Search
+            </mat-placeholder>
+          <input matInput [formControl]="searchInput" (keyup.enter)="applySearch()">
+        </mat-form-field>
+        <span class="title-spacer"></span>
+        <button mat-mini-fab style="margin-right:10px; background-color:#a28b6e" (click)="sidenav.toggle()">
+          <mat-icon>search</mat-icon>
+        </button>
+        <button mat-mini-fab style="margin-right:10px; background-color:darkgray" (click)="loadLoans()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </mat-toolbar-row>
+    </mat-toolbar>
     <mat-table #table [dataSource]="pagedLoans?.data" matSort matSortActive="loanName" matSortDirection="asc">
      
 	    <ng-container matColumnDef="loanName">
@@ -17,7 +39,7 @@
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
         <mat-cell *matCellDef="let el"> {{el.status}} </mat-cell>
       </ng-container>
 
@@ -41,3 +63,27 @@
     </mat-table>
 
     <mat-paginator [length]="pagedLoans?.total" [pageSizeOptions]="[5, 10]" pageSize="5"></mat-paginator>
+  </mat-card>
+    <mat-sidenav class="search-panel" dark #sidenav mode="push" opened="false">
+      <mat-card class="profile-card">
+        <mat-card-header>
+          <div mat-card-avatar class="avatar"></div>
+          <mat-card-subtitle>
+            <button mat-raised-button (click)="sidenav.toggle()">
+              <mat-icon>search</mat-icon>Search </button>
+            <button mat-raised-button (click)="resetGrid(); sidenav.toggle()">
+              <mat-icon>refresh</mat-icon>Reset</button>
+          </mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      <mat-nav-list style="margin-left:20px;">
+        <form [formGroup]="filterForm" (ngSubmit)="sidenav.toggle()">
+          <mat-form-field>
+            <input matInput type="text" placeholder="Loan Type" style="width:200px;" formControlName="loanName" (keyup.enter)="filterFromForm(); sidenav.toggle()"  />
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput type="text" placeholder="Customer" style="width:200px;" formControlName="customerName" (keyup.enter)="filterFromForm(); sidenav.toggle()"  />
+          </mat-form-field>
+        </form>
+      </mat-nav-list>
+    </mat-sidenav>

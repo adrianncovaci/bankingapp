@@ -13,11 +13,11 @@ namespace BankingApp.API.Controllers {
         //     _roleManager = roleManager;
         // }
 
-        [Authorize(Policy = "AdminRole")]
-        [HttpGetAttribute("users")]
-        public async Task<IActionResult> GetUsesrsWithRoles() {
-            return Ok("only admins!");
-        }
+        // [Authorize(Policy = "AdminRole")]
+        // [HttpGetAttribute("users")]
+        // public async Task<IActionResult> GetUsesrsWithRoles() {
+        //     return Ok("only admins!");
+        // }
 
     //     [HttpPostAttribute]
     //     public Task<IActionResult> CreateRole()

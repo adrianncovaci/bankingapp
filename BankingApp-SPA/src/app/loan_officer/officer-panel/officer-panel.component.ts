@@ -7,19 +7,13 @@ import { AlertifyService } from 'src/app/_services/alertify.service';
 import { TableColumn } from 'src/app/_models/pagination/table-column';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { PaginatedRequest } from '../../_models/pagination/paginated-request'; 
 import { PagedResult } from '../../_models/pagination/paged-result'; 
 import { RequestFilters } from 'src/app/_models/pagination/request-filters';
 import { merge } from 'rxjs';
-
-interface LoanRow {
-  loanName: string;
-  customerName: string;
-  dateIssued: Date;
-  status: string;
-  comments: string;
-}
+import { Filter } from 'src/app/_models/pagination/filter';
+import { FilterOperators } from 'src/app/_models/pagination/filter-operators';
 
 @Component({
   selector: 'app-officer-panel',
@@ -27,45 +21,105 @@ interface LoanRow {
   styleUrls: ['./officer-panel.component.css']
 })
 export class OfficerPanelComponent implements AfterViewInit {
+
   pagedLoans: PagedResult<LoanRequest>;
 
   tableColumns: TableColumn[] = [
-    { name: 'loanName', displayName: 'Loan', index: 'loanName', useInSearch: true },
-    { name: 'customerName', displayName: 'Customer CNP', index: 'customerName', useInSearch: true },
-    { name: 'dateIssued', displayName: 'Date Issued', index: 'dateIssued', useInSearch: true },
-    { name: 'status', displayName: 'Status', index: 'status', useInSearch: true },
+    { name: 'loanName', displayName: 'Loan', index: 'loan.loantype.type', useInSearch: true },
+    { name: 'customerName', displayName: 'Customer CNP', index: 'customer.cnp', useInSearch: true },
+    { name: 'dateIssued', displayName: 'Date Issued', index: 'dateIssued', useInSearch: false },
+    { name: 'status', displayName: 'Status', index: 'status', useInSearch: false },
     { name: 'comments', displayName: 'Comments', index: 'comments', useInSearch: false },
-    { name: 'id', displayName: 'Actions', index: 'id', useInSearch: true }
+    { name: 'id', displayName: 'Actions', index: 'id', useInSearch: false }
   ];
   displayedColumns: string[];
   loanRequests: LoanRequest[];
   loanTypes: LoanType[];
   navigationSubscription;
   requestFilters: RequestFilters;
-
+  searchInput = new FormControl('');
+  filterForm: FormGroup;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false}) sort: MatSort;
 
   constructor(private activeRouter: ActivatedRoute, private loanService: LoanService, private alertify: AlertifyService, private fb: FormBuilder) {
     this.displayedColumns = this.tableColumns.map(el => el.name);
-  }
-
-  ngAfterViewInit(): void {
-    this.loadBooks();
-    this.sort.sortChange.subscribe( () => this.paginator.pageIndex = 0 );
-
-    merge(this.sort.sortChange, this.paginator.page).subscribe(() => {
-      this.loadBooks();
+    this.filterForm = this.fb.group({
+      loanName: [''],
+      customerName: ['']
     });
   }
 
-  loadBooks() {
+  ngAfterViewInit(): void {
+    this.loadLoans();
+    this.sort.sortChange.subscribe( () => this.paginator.pageIndex = 0 );
+
+    merge(this.sort.sortChange, this.paginator.page).subscribe(() => {
+      this.loadLoans();
+    });
+  }
+
+  applySearch() {
+    this.createFiltersFromSearchInput();
+    this.loadLoans();
+  }
+
+  filterFromForm() {
+    this.createFilterFromForm();
+    this.loadLoans();
+  }
+
+  createFiltersFromSearchInput() {
+    const val = this.searchInput.value.trim();
+    if (val) {
+      const filters: Filter[] = [];
+      this.tableColumns.forEach(col => {
+        if(col.useInSearch) {
+          const filter: Filter = { path: col.index, value: val };
+          filters.push(filter);
+        }
+      });
+      this.requestFilters = {
+        logicalOperator: FilterOperators.Or,
+        filters
+      };
+    } else {
+      this.resetGrid();
+    }
+    console.log(this.requestFilters.logicalOperator);
+  }
+
+  loadLoans() {
     const request = new PaginatedRequest(this.paginator, this.sort, this.requestFilters);
     console.log(request);
     this.loanService.getAllLoanRequests(request).subscribe((loans: PagedResult<LoanRequest>) => {
       console.log(loans);
       this.pagedLoans = loans;
     });
+  }
+
+  createFilterFromForm() {
+    if(this.filterForm.value) {
+      const filters: Filter[] = [];
+      Object.keys(this.filterForm.controls).forEach(key => {
+        const controlValue = this.filterForm.controls[key].value;
+        if (controlValue) {
+          const foundTableColumn = this.tableColumns.find(tableColumn => tableColumn.name === key);
+          const filter: Filter = { path : foundTableColumn.index, value : controlValue };
+          filters.push(filter);
+        }
+      });
+
+      this.requestFilters = {
+        logicalOperator: FilterOperators.And,
+        filters
+      };
+    }
+  }
+
+  resetGrid() {
+    this.requestFilters = { filters: [], logicalOperator: FilterOperators.And };
+    this.loadLoans();
   }
 
   acceptLoanRequest(id: number) {
