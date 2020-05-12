@@ -3,6 +3,8 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Transaction } from '../_models/transaction';
+import { ExchangeRate } from '../_models/exchangerate';
+import { createViewChildren } from '@angular/compiler/src/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,8 @@ export class TransferService {
 
   constructor(private http: HttpClient) { }
 
-  getExchangeRate() {
-    return this.http.get(this.baseUrl + 'bankaccount/rates');
+  getExchangeRate(): Observable<ExchangeRate> {
+    return this.http.get<ExchangeRate>(this.baseUrl + 'bankaccount/rates')
   }
 
   withdraw(model: any) {

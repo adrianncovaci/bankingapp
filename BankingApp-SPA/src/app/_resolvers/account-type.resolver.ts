@@ -15,7 +15,7 @@ export class AccountTypeResolver implements Resolve<BankAccountTypes[]> {
         return this.bankAccountService.getBankAccountTypes().pipe(
             catchError( error => {
                 this.alertify.error("Problem retrieving data");
-                this.router.navigate(['']);
+                this.router.navigate(['home']);
                 return of(null);
             })
         );

@@ -51,8 +51,8 @@
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
         <mat-cell *matCellDef="let el">
-          <a mat-button color="primary">Activate</a>
-          <a mat-button color="warn">Reject</a>
+          <a mat-button color="primary" (click)="acceptLoanRequest(el.id, el.id, el.customerName)">Activate</a>
+          <a mat-button color="warn" (click)="rejectLoanRequest(el.id)">Reject</a>
         </mat-cell>
       </ng-container>
      

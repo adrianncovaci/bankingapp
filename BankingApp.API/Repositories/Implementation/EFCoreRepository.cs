@@ -103,5 +103,11 @@ namespace BankingApp.API.Repositories {
         {
             return await _context.Set<T>().CreatePaginatedResultAsync<T, TModel>(request, _mapper);
         }
+
+        public async Task<T> GetByIdWithInclude<T>(int id, params Expression<Func<T, object>>[] props) where T : BaseEntity
+        {
+            var query = IncludeProperties(props);
+            return await query.FirstOrDefaultAsync(entity => entity.Id == id);
+        }
     }
 }

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Bankaccount } from '../_models/bankaccount';
 import { BankAccountTypes } from '../_models/bankaccounttypes';
 import { User } from '../_models/user';
+import { BankAccountsModule } from '../bank-accounts/bank-accounts.module';
 
 @Injectable({
   providedIn: 'root'

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ExchangeRate } from '../_models/exchangerate';
-import { LoanService } from '../_services/loan.service';
 import { AlertifyService } from '../_services/alertify.service';
 import { ActivatedRoute } from '@angular/router';
+import { TransferService } from '../_services/transfer.service';
+import { TableColumn } from 'src/app/_models/pagination/table-column';
+import { MatTable } from '@angular/material/table';
 
 export interface Currency {
   position: number;
@@ -16,20 +18,27 @@ export interface Currency {
   styleUrls: ['./exchange-rate.component.css']
 })
 export class ExchangeRateComponent implements OnInit {
-  collumns: string[] = ["position", "currency", "value"];
-  exchangeRate: ExchangeRate;
+  @ViewChild(MatTable) table: MatTable<any>;
   currencies: Currency[] = [];
-  constructor(private alertify: AlertifyService, private route: ActivatedRoute) { }
-
-  ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.exchangeRate = data['exchangeRate'];
-      let index = 1
-      for(const key in this.exchangeRate.rates) {
-        this.currencies.push({ position: index, currency: key, value: this.exchangeRate.rates[key] });
-        index += 1;
-      }
-    })
+  collumns: string[] = ["position", "currency", "value"];
+  exchangeRate: ExchangeRate = null;
+  val: number;
+  loading = true;
+  constructor(private transferService: TransferService, private alertify: AlertifyService, private route: ActivatedRoute) { 
   }
 
+  ngOnInit() {
+    this.getExchangeRate();
+  }
+
+  async getExchangeRate() {
+    this.exchangeRate = await this.transferService.getExchangeRate().toPromise();
+    let index = 1;
+    for (const key in this.exchangeRate.rates) {
+      this.currencies.push( { position: index, currency: key, value: this.exchangeRate.rates[key] } )
+      index += 1;
+    }
+    this.table.renderRows();
+    this.loading = false;
+  }
 }

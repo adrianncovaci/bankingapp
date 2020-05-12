@@ -14,7 +14,7 @@ export class AccountListResolver implements Resolve<Bankaccount[]> {
         return this.bankAccountService.getBankAccountsByLoggedInUser().pipe(
             catchError( error => {
                 this.alertify.error("Problem retrieving data");
-                this.router.navigate(['/login']);
+                this.router.navigate(['/home']);
                 return of(null);
             })
         );

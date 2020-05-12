@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BankingApp.API.Helpers;
 using BankingApp.API.Infrastructure.Extensions;
+using BankingApp.API.Models.BankAccounts;
 using BankingApp.API.Models.Loans;
 using BankingApp.API.Models.Pagination;
 using BankingApp.API.Repositories.Interfaces;
@@ -21,11 +22,27 @@ namespace BankingApp.API.Controllers {
         private readonly IRepository _repo;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _customerManager;
-
-        public LoanController(IRepository repo, IMapper map, UserManager<User> custom) {
+        private readonly IBankAccountRepository _bankRepo;
+        public LoanController(IRepository repo, IMapper map, UserManager<User> custom, IBankAccountRepository bank) {
             _repo = repo;
             _mapper = map;
             _customerManager = custom;
+            _bankRepo = bank;
+        }
+
+        [HttpPostAttribute()]
+        public async Task<IActionResult> CreateLoan([FromBody] CreateLoanModel model) {
+            var loan = await _repo.GetByIdWithInclude<Loan>(model.LoanId, o => o.LoanType);
+            var customer = await _repo.GetWithWhere<Customer>(o => o.CNP == model.CustomerCNP);
+            var create_model = new CreateBankAccountModel {
+                AccountType = 4,
+                InitialDeposit = 10000,
+            };       
+            var bankAccount = await _bankRepo.CreateAccount(create_model, customer.Id.ToString());
+            bankAccount.InterestRate = loan.InterestRate;
+            bankAccount.Period = loan.Period;
+            var bank = await _repo.Add<BankAccount>(bankAccount);
+            return Ok(bank);
         }
 
         [HttpPostAttribute("request/")]
@@ -72,7 +89,7 @@ namespace BankingApp.API.Controllers {
         }
 
         [HttpPostAttribute("accept/{id}")]
-        public async Task<IActionResult> AcceptLoanRequest(int id) {
+        public async Task<IActionResult> AcceptLoanRequest([FromBody] CreateLoanModel model, int id) {
             var loanRequest = await _repo.GetById<LoanRequest>(id);
 
             if (loanRequest.Status != LoanRequestStatus.Pending) {
@@ -82,6 +99,7 @@ namespace BankingApp.API.Controllers {
             loanRequest.Status = LoanRequestStatus.Accepted;
             var requestAction = await EvaluateLoanRequest(id, ActionType.Accept);
             await _repo.Add(requestAction);
+            await CreateLoan(model);
             return Ok(requestAction);
         }
 

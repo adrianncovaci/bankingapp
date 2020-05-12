@@ -14,10 +14,9 @@ export class LoanTypeResolver implements Resolve<LoanType[]> {
         return this.loanRequest.getLoanTypes().pipe(
             catchError( error => {
                 this.alertify.error("Problem retrieving data");
-                this.router.navigate(['']);
+                this.router.navigate(['home']);
                 return of(null);
             })
         );
     }
-
 }

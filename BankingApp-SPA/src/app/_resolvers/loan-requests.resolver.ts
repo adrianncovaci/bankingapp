@@ -15,7 +15,7 @@ export class LoanRequestsResolver implements Resolve<LoanRequest[]> {
         return this.loanRequest.getLoanRequestsByCurrentUser().pipe(
             catchError( error => {
                 this.alertify.error("Problem retrieving data");
-                this.router.navigate(['']);
+                this.router.navigate(['home']);
                 return of(null);
             })
         );

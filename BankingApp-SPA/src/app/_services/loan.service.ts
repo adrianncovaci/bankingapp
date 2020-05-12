@@ -32,8 +32,8 @@ export class LoanService {
     return this.http.post<PagedResult<LoanRequest>>(this.baseUrl + 'loan/allrequests', pagedRequest);
   }
 
-  acceptLoanRequest(id: number): Observable<LoanRequest> {
-    return this.http.post<LoanRequest>(this.baseUrl + 'loan/accept/' + id, {});
+  acceptLoanRequest(id: number, model: any): Observable<LoanRequest> {
+    return this.http.post<LoanRequest>(this.baseUrl + 'loan/accept/' + id, model);
   }
 
   rejectLoanRequest(id: number): Observable<LoanRequest> {

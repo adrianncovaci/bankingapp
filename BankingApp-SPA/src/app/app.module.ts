@@ -14,24 +14,27 @@ import { AppRoutingModule } from './app-routing.module';
 import { FooterComponent } from './footer/footer.component';
 import { AuthService } from './_services/auth.service';
 import { RegisterComponent } from './register/register.component';
-import { BankaccountListComponent } from './BankAccounts/bankaccount-list/bankaccount-list.component';
-import { BankaccountCardComponent } from './BankAccounts/bankaccount-card/bankaccount-card.component';
+import { BankaccountListComponent } from './bank-accounts/bankaccount-list/bankaccount-list.component';
+import { BankaccountCardComponent } from './bank-accounts/bankaccount-card/bankaccount-card.component';
 import { HomeComponent } from './home/home.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { AccountListResolver } from './_resolvers/account-list.resolver';
 import { AccountTypeResolver } from './_resolvers/account-type.resolver';
 import { RouterModule } from '@angular/router';
-import { BankaccountCreateComponent } from './BankAccounts/bankaccount-create/bankaccount-create.component';
-import { BankaccountDetailComponent } from './BankAccounts/bankaccount-detail/bankaccount-detail.component';
+import { BankaccountCreateComponent } from './bank-accounts/bankaccount-create/bankaccount-create.component';
+import { BankaccountDetailComponent } from './bank-accounts/bankaccount-detail/bankaccount-detail.component';
 import { TransactionListComponent } from './transaction-list/transaction-list.component';
 import { LoanApplyComponent } from './loan-apply/loan-apply.component';
 import { LoanRequestsListComponent } from './loan-requests-list/loan-requests-list.component';
 import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
 import { ExchangeRateComponent } from './exchange-rate/exchange-rate.component';
-import { ExchangeRateResolver } from './_resolvers/exchange-rate.resolver';
 import { OfficerPanelComponent } from './loan_officer/officer-panel/officer-panel.component';
 import { HasRolesDirective } from './_directives/has-roles.directive';
 import { LoanTypeResolver } from './_resolvers/loan-type.resolver';
+import { HomepageComponent } from './homepage/homepage.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
+import { BankaccountsService } from './_services/bankaccounts.service';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -45,25 +48,24 @@ export function tokenGetter() {
     LoginComponent,
     FooterComponent,
     RegisterComponent,
-    BankaccountListComponent,
-    BankaccountCardComponent,
     HomeComponent,
-    BankaccountCreateComponent,
-    BankaccountDetailComponent,
     TransactionListComponent,
     LoanApplyComponent,
     LoanRequestsListComponent,
     ExchangeRateComponent,
     OfficerPanelComponent,
-    HasRolesDirective
+    HasRolesDirective,
+    HomepageComponent,
+    UserDetailComponent
   ],
   imports: [
+    ReactiveFormsModule,
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule,
     MaterialModule,
     AppRoutingModule,
+    BankAccountsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -74,10 +76,10 @@ export function tokenGetter() {
   ],
   providers: [
       AuthService,
+      BankaccountsService,
       AccountListResolver,
       AccountTypeResolver,
       LoanRequestsResolver,
-      ExchangeRateResolver,
       LoanTypeResolver,
   ],
   bootstrap: [AppComponent]

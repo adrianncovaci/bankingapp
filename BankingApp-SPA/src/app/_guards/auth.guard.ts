@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
           return true;
         }
         else {
-          this.router.navigate(['']);
+          this.router.navigate(['home']);
           this.alertify.error("You can not access this area");
         }
       }

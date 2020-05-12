@@ -1,22 +1,24 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
 <h2 class="mat-h2">Base: Euro</h2>
-<table mat-table [dataSource]="currencies" class="mat-elevation-z8">
-
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef> No </th>
-    <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-  </ng-container>
+<mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+<mat-table #table [dataSource]="currencies">
   
+  <ng-container matColumnDef="position">
+    <mat-header-cell *matHeaderCellDef> Position </mat-header-cell>
+    <mat-cell *matCellDef="let el"> {{ el.position }} </mat-cell>
+  </ng-container>
+
   <ng-container matColumnDef="currency">
-    <th mat-header-cell *matHeaderCellDef> Currency </th>
-    <td mat-cell *matCellDef="let element"> {{element.currency}} </td>
+    <mat-header-cell *matHeaderCellDef> Currency </mat-header-cell>
+    <mat-cell *matCellDef="let el"> {{el.currency}} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="value">
-    <th mat-header-cell *matHeaderCellDef> Value </th>
-    <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+    <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
+    <mat-cell *matCellDef="let el"> {{el.value}} </mat-cell>
   </ng-container>
+  
+<mat-header-row *matHeaderRowDef="collumns"></mat-header-row>
+<mat-row *matRowDef="let row; columns: collumns;"></mat-row>
 
-  <tr mat-header-row *matHeaderRowDef="collumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: collumns;"></tr> -->
-</table>
+</mat-table>

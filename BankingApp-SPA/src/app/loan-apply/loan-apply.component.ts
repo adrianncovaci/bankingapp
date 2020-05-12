@@ -43,9 +43,6 @@ export class LoanApplyComponent implements OnInit {
       if (this.message[i] === true)
         this.model.loanId = this.loanTypes[i].id;
         
-
-    console.log(this.model);
-
     this.loanService.requestLoan(this.model).subscribe( () => {
       this.alertify.success("Successfully requested");
     }, error => {

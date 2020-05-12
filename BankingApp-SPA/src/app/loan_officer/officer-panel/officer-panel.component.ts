@@ -122,8 +122,9 @@ export class OfficerPanelComponent implements AfterViewInit {
     this.loadLoans();
   }
 
-  acceptLoanRequest(id: number) {
-    this.loanService.acceptLoanRequest(id).subscribe(next => {
+  acceptLoanRequest(id: number, loanId: number, cnp: string) {
+    let model = { loanId: loanId, customerCnp: cnp };
+    this.loanService.acceptLoanRequest(id, model).subscribe(next => {
       this.alertify.success("Successfully accepted");
     },
     error => {

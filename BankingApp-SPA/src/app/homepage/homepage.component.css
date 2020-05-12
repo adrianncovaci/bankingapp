@@ -1,0 +1,19 @@
+.main_card {
+    margin: 0 auto;
+}
+.header_image {
+    width:85%;
+    height: 840px;
+    margin: 0 auto;
+    display: block;
+}
+
+.map {
+    margin: 0 auto;
+    display: block;
+    width: 85%;
+}
+
+mat-card-content {
+    margin: 0 auto;
+}
