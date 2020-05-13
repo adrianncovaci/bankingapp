@@ -8,8 +8,8 @@ import { TableColumn } from 'src/app/_models/pagination/table-column';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { PaginatedRequest } from '../../_models/pagination/paginated-request'; 
-import { PagedResult } from '../../_models/pagination/paged-result'; 
+import { PaginatedRequest } from '../../_models/pagination/paginated-request';
+import { PagedResult } from '../../_models/pagination/paged-result';
 import { RequestFilters } from 'src/app/_models/pagination/request-filters';
 import { merge } from 'rxjs';
 import { Filter } from 'src/app/_models/pagination/filter';
@@ -18,41 +18,69 @@ import { FilterOperators } from 'src/app/_models/pagination/filter-operators';
 @Component({
   selector: 'app-officer-panel',
   templateUrl: './officer-panel.component.html',
-  styleUrls: ['./officer-panel.component.css']
+  styleUrls: ['./officer-panel.component.css'],
 })
 export class OfficerPanelComponent implements AfterViewInit {
-
   pagedLoans: PagedResult<LoanRequest>;
 
   tableColumns: TableColumn[] = [
-    { name: 'loanName', displayName: 'Loan', index: 'loan.loantype.type', useInSearch: true },
-    { name: 'customerName', displayName: 'Customer CNP', index: 'customer.cnp', useInSearch: true },
-    { name: 'dateIssued', displayName: 'Date Issued', index: 'dateIssued', useInSearch: false },
-    { name: 'status', displayName: 'Status', index: 'status', useInSearch: false },
-    { name: 'comments', displayName: 'Comments', index: 'comments', useInSearch: false },
-    { name: 'id', displayName: 'Actions', index: 'id', useInSearch: false }
+    {
+      name: 'loanName',
+      displayName: 'Loan',
+      index: 'loan.loantype.type',
+      useInSearch: true,
+    },
+    {
+      name: 'customerName',
+      displayName: 'Customer CNP',
+      index: 'customer.cnp',
+      useInSearch: true,
+    },
+    {
+      name: 'dateIssued',
+      displayName: 'Date Issued',
+      index: 'dateIssued',
+      useInSearch: false,
+    },
+    {
+      name: 'status',
+      displayName: 'Status',
+      index: 'status',
+      useInSearch: false,
+    },
+    {
+      name: 'comments',
+      displayName: 'Comments',
+      index: 'comments',
+      useInSearch: false,
+    },
+    { name: 'id', displayName: 'Actions', index: 'id', useInSearch: false },
   ];
   displayedColumns: string[];
   loanRequests: LoanRequest[];
   loanTypes: LoanType[];
-  navigationSubscription;
   requestFilters: RequestFilters;
   searchInput = new FormControl('');
   filterForm: FormGroup;
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  constructor(private activeRouter: ActivatedRoute, private loanService: LoanService, private alertify: AlertifyService, private fb: FormBuilder) {
-    this.displayedColumns = this.tableColumns.map(el => el.name);
+  constructor(
+    private activeRouter: ActivatedRoute,
+    private loanService: LoanService,
+    private alertify: AlertifyService,
+    private fb: FormBuilder
+  ) {
+    this.displayedColumns = this.tableColumns.map((el) => el.name);
     this.filterForm = this.fb.group({
       loanName: [''],
-      customerName: ['']
+      customerName: [''],
     });
   }
 
   ngAfterViewInit(): void {
     this.loadLoans();
-    this.sort.sortChange.subscribe( () => this.paginator.pageIndex = 0 );
+    this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
 
     merge(this.sort.sortChange, this.paginator.page).subscribe(() => {
       this.loadLoans();
@@ -73,46 +101,54 @@ export class OfficerPanelComponent implements AfterViewInit {
     const val = this.searchInput.value.trim();
     if (val) {
       const filters: Filter[] = [];
-      this.tableColumns.forEach(col => {
-        if(col.useInSearch) {
+      this.tableColumns.forEach((col) => {
+        if (col.useInSearch) {
           const filter: Filter = { path: col.index, value: val };
           filters.push(filter);
         }
       });
       this.requestFilters = {
         logicalOperator: FilterOperators.Or,
-        filters
+        filters,
       };
     } else {
       this.resetGrid();
     }
-    console.log(this.requestFilters.logicalOperator);
   }
 
   loadLoans() {
-    const request = new PaginatedRequest(this.paginator, this.sort, this.requestFilters);
-    console.log(request);
-    this.loanService.getAllLoanRequests(request).subscribe((loans: PagedResult<LoanRequest>) => {
-      console.log(loans);
-      this.pagedLoans = loans;
-    });
+    const request = new PaginatedRequest(
+      this.paginator,
+      this.sort,
+      this.requestFilters
+    );
+    this.loanService
+      .getAllLoanRequests(request)
+      .subscribe((loans: PagedResult<LoanRequest>) => {
+        this.pagedLoans = loans;
+      });
   }
 
   createFilterFromForm() {
-    if(this.filterForm.value) {
+    if (this.filterForm.value) {
       const filters: Filter[] = [];
-      Object.keys(this.filterForm.controls).forEach(key => {
+      Object.keys(this.filterForm.controls).forEach((key) => {
         const controlValue = this.filterForm.controls[key].value;
         if (controlValue) {
-          const foundTableColumn = this.tableColumns.find(tableColumn => tableColumn.name === key);
-          const filter: Filter = { path : foundTableColumn.index, value : controlValue };
+          const foundTableColumn = this.tableColumns.find(
+            (tableColumn) => tableColumn.name === key
+          );
+          const filter: Filter = {
+            path: foundTableColumn.index,
+            value: controlValue,
+          };
           filters.push(filter);
         }
       });
 
       this.requestFilters = {
         logicalOperator: FilterOperators.And,
-        filters
+        filters,
       };
     }
   }
@@ -124,20 +160,24 @@ export class OfficerPanelComponent implements AfterViewInit {
 
   acceptLoanRequest(id: number, loanId: number, cnp: string) {
     let model = { loanId: loanId, customerCnp: cnp };
-    this.loanService.acceptLoanRequest(id, model).subscribe(next => {
-      this.alertify.success("Successfully accepted");
-    },
-    error => {
-      this.alertify.error("Something went wrong");
-    });
+    this.loanService.acceptLoanRequest(id, model).subscribe(
+      (next) => {
+        this.alertify.success('Successfully accepted');
+      },
+      (error) => {
+        this.alertify.error('Something went wrong');
+      }
+    );
   }
 
   rejectLoanRequest(id: number) {
-    this.loanService.rejectLoanRequest(id).subscribe(next => {
-      this.alertify.success("Successfully rejected");
-    },
-    error => {
-      this.alertify.error("Something went wrong");
-    });
+    this.loanService.rejectLoanRequest(id).subscribe(
+      (next) => {
+        this.alertify.success('Successfully rejected');
+      },
+      (error) => {
+        this.alertify.error('Something went wrong');
+      }
+    );
   }
 }

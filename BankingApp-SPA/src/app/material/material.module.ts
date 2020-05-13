@@ -11,14 +11,16 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatExpansionModule } from '@angular/material/expansion'; 
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort'; 
+import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [],
@@ -42,6 +44,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatSortModule,
     MatSidenavModule,
     MatProgressBarModule,
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [
     MatToolbarModule,
@@ -62,6 +67,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatSortModule,
     MatSidenavModule,
     MatProgressBarModule,
-  ]
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
-export class MaterialModule { }
+export class MaterialModule {}

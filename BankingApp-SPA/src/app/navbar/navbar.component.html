@@ -9,8 +9,6 @@
     <div class = "spacer">
     </div>
 
-    <a mat-button>Services</a>
-    <a mat-button>Info</a>
     <a *ngIf="!isLoggedIn()" routerLink = "/login" routerLinkActive="active" mat-button color="link">Sign Up</a>
     <div *ngIf="isLoggedIn()">
         <a mat-button *appHasRoles="['Admin', 'LoanOfficer']" routerLink="officer">Loan Requests</a>

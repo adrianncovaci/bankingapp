@@ -2,29 +2,36 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using BankingApp.API.Models.Pagination;
+using BankingApp.API.Models.Transactions;
 using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace BankingApp.API.Controllers {
+namespace BankingApp.API.Controllers
+{
     [AuthorizeAttribute]
     [ApiControllerAttribute]
     [Route("[controller]")]
-    public class TransactionController: ControllerBase {
+    public class TransactionController : ControllerBase
+    {
         private readonly IRepository _repo;
         private readonly IMapper _mapper;
 
-        public TransactionController(IRepository repository, IMapper mapper) {
+        public TransactionController(IRepository repository, IMapper mapper)
+        {
             _repo = repository;
             _mapper = mapper;
         }
 
-        [HttpGetAttribute("transactions/{id}")]
-        public async Task<IActionResult> GetTransactionsByUser(int id) {
-            var acc = await _repo.GetById<BankAccount>(id);
-            var transactions = await _repo.GetWithWhereList<Transaction>(o => o.SenderAccountId == acc.Id);
-            return Ok(transactions); 
+        [HttpPostAttribute("transactions/{id}")]
+        public async Task<IActionResult> GetTransactionsByUser(int id, [FromBody] PagedRequest pagedRequest)
+        {
+            var models = await _repo.GetPagedResponse<Transaction, TransactionModel>(pagedRequest);
+            models.Data = models.Data.Where(x => x.SenderAccountId == id).ToList();
+            return Ok(models);
         }
     }
 }

@@ -5,17 +5,19 @@ import { Observable } from 'rxjs';
 import { Transaction } from '../_models/transaction';
 import { ExchangeRate } from '../_models/exchangerate';
 import { createViewChildren } from '@angular/compiler/src/core';
+import { PaginatedRequest } from '../_models/pagination/paginated-request';
+import { PagedResult } from '../_models/pagination/paged-result';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TransferService {
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getExchangeRate(): Observable<ExchangeRate> {
-    return this.http.get<ExchangeRate>(this.baseUrl + 'bankaccount/rates')
+    return this.http.get<ExchangeRate>(this.baseUrl + 'bankaccount/rates');
   }
 
   withdraw(model: any) {
@@ -30,7 +32,13 @@ export class TransferService {
     return this.http.post(this.baseUrl + 'bankaccount/transfer', model);
   }
 
-  getTransactionsByUser(id: number): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(this.baseUrl + 'transaction/transactions/' + id);
+  getTransactionsByAccount(
+    id: number,
+    pagedRequest: PaginatedRequest
+  ): Observable<PagedResult<Transaction>> {
+    return this.http.post<PagedResult<Transaction>>(
+      this.baseUrl + 'transaction/transactions/' + id,
+      pagedRequest
+    );
   }
 }
