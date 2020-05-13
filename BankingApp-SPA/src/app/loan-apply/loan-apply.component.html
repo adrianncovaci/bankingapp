@@ -13,7 +13,7 @@
                 <mat-form-field>
                     <textarea formControlName="comments" matInput placeholder="Message" cdkTextareaAutosize>
                     </textarea>
-                    <mat-error *ngIf='f.comments.invalid && f.comments.touched'>
+                    <mat-error *ngIf='formValue.comments.invalid && formValue.comments.touched'>
                         This section is required.
                     </mat-error>
                 </mat-form-field>

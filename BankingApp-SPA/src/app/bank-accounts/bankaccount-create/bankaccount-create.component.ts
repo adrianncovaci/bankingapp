@@ -34,7 +34,7 @@ export class BankaccountCreateComponent implements OnInit {
     })
   }
 
-  get f() {
+  get formValue() {
     return this.createForm.controls;
   }
 

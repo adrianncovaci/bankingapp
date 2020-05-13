@@ -16,14 +16,14 @@
                             </mat-option>
                         </div>
                     </mat-select>
-                    <mat-error *ngIf='f.accountType.invalid && f.accountType.touched'>
+                    <mat-error *ngIf='formValue.accountType.invalid && formValue.accountType.touched'>
                         Please provide a valid type.
                     </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class = "form-el">
                     <input matInput placeholder="Initial Deposit" formControlName="initialDeposit">
-                    <mat-error *ngIf="f.initialDeposit.invalid && f.initialDeposit.touched">
+                    <mat-error *ngIf="formValue.initialDeposit.invalid && formValue.initialDeposit.touched">
                         Please provide a valid amount.
                     </mat-error>
                 </mat-form-field>

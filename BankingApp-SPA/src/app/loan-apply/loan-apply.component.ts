@@ -31,7 +31,7 @@ export class LoanApplyComponent implements OnInit {
     });
   }
 
-  get f() {
+  get formValue() {
     return this.applyForm.controls;
   }
 
