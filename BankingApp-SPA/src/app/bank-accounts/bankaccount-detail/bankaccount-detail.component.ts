@@ -124,8 +124,8 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
   getTransactionsByAccount() {
     const request = new PaginatedRequest(
       this.paginator,
-      this.sort,
-      this.requestFilters
+      this.requestFilters,
+      this.sort
     );
     console.log(request);
     this.transferService

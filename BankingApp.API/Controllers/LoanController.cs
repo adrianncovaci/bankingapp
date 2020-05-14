@@ -43,7 +43,7 @@ namespace BankingApp.API.Controllers
                 AccountType = 4,
                 InitialDeposit = 10000,
             };
-            var bankAccount = await _bankRepo.CreateAccount(create_model, customer.Id.ToString());
+            var bankAccount = await _bankRepo.CreateAccount(create_model, customer.UserId.ToString());
             bankAccount.InterestRate = loan.InterestRate;
             bankAccount.Period = loan.Period;
             var bank = await _repo.Add<BankAccount>(bankAccount);
@@ -97,7 +97,7 @@ namespace BankingApp.API.Controllers
         }
 
         [HttpPostAttribute("accept/{id}")]
-        public async Task<IActionResult> AcceptLoanRequest([FromBody] CreateLoanModel model, int id)
+        public async Task<IActionResult> AcceptLoanRequest(int id, [FromBody] CreateLoanModel model)
         {
             var loanRequest = await _repo.GetById<LoanRequest>(id);
 
@@ -127,14 +127,31 @@ namespace BankingApp.API.Controllers
             return requestAction;
         }
 
-        [HttpGetAttribute("loans")]
-        public async Task<IActionResult> GetLoans()
+        [HttpPostAttribute("loans")]
+        public async Task<IActionResult> GetLoans([FromBody] PagedRequest model)
+        {
+            var models = await _repo.GetPagedResponse<Loan, LoanModel>(model);
+            var types = await _repo.GetAll<LoanType>();
+            foreach (var _model in models.Data)
+            {
+                foreach (var _type in types)
+                {
+                    if (_model.LoanTypeId == _type.Id)
+                    {
+                        _model.Type = _type.Type;
+                        break;
+                    }
+                }
+            }
+            return Ok(models);
+        }
+
+        [HttpPostAttribute("loantypes")]
+        public async Task<IActionResult> GetAllLoanTypes([FromBody] PagedRequest model)
         {
             var loans = await _repo.GetWithInclude<Loan>(o => o.LoanType);
             var models = _mapper.Map<IList<LoanModel>>(loans);
             return Ok(models);
         }
-
-
     }
 }

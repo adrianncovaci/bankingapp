@@ -119,8 +119,8 @@ export class OfficerPanelComponent implements AfterViewInit {
   loadLoans() {
     const request = new PaginatedRequest(
       this.paginator,
-      this.sort,
-      this.requestFilters
+      this.requestFilters,
+      this.sort
     );
     this.loanService
       .getAllLoanRequests(request)
@@ -159,8 +159,10 @@ export class OfficerPanelComponent implements AfterViewInit {
   }
 
   acceptLoanRequest(id: number, loanId: number, cnp: string) {
-    let model = { loanId: loanId, customerCnp: cnp };
-    this.loanService.acceptLoanRequest(id, model).subscribe(
+    let model = { loanId: id, customerCnp: cnp };
+    console.log(id);
+    console.log(model);
+    this.loanService.acceptLoanRequest(loanId, model).subscribe(
       (next) => {
         this.alertify.success('Successfully accepted');
       },

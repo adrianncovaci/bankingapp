@@ -9,15 +9,22 @@ import { PaginatedRequest } from '../_models/pagination/paginated-request';
 import { PagedResult } from '../_models/pagination/paged-result';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoanService {
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getLoanTypes(): Observable<LoanType[]> {
-    return this.http.get<LoanType[]>(this.baseUrl + 'loan/loans');
+  getAllLoanTypes(): Observable<LoanType[]> {
+    return this.http.get<LoanType[]>(this.baseUrl + 'loan/loantypes');
+  }
+
+  getLoanTypes(model: PaginatedRequest): Observable<PagedResult<LoanType>> {
+    return this.http.post<PagedResult<LoanType>>(
+      this.baseUrl + 'loan/loans',
+      model
+    );
   }
 
   requestLoan(model: any): Observable<Transaction> {
@@ -28,12 +35,20 @@ export class LoanService {
     return this.http.get<LoanRequest[]>(this.baseUrl + 'loan/requests');
   }
 
-  getAllLoanRequests(pagedRequest: PaginatedRequest): Observable<PagedResult<LoanRequest>> {
-    return this.http.post<PagedResult<LoanRequest>>(this.baseUrl + 'loan/allrequests', pagedRequest);
+  getAllLoanRequests(
+    pagedRequest: PaginatedRequest
+  ): Observable<PagedResult<LoanRequest>> {
+    return this.http.post<PagedResult<LoanRequest>>(
+      this.baseUrl + 'loan/allrequests',
+      pagedRequest
+    );
   }
 
   acceptLoanRequest(id: number, model: any): Observable<LoanRequest> {
-    return this.http.post<LoanRequest>(this.baseUrl + 'loan/accept/' + id, model);
+    return this.http.post<LoanRequest>(
+      this.baseUrl + 'loan/accept/' + id,
+      model
+    );
   }
 
   rejectLoanRequest(id: number): Observable<LoanRequest> {
