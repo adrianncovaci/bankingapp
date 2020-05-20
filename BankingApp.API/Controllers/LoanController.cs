@@ -8,6 +8,7 @@ using BankingApp.API.Infrastructure.Extensions;
 using BankingApp.API.Models.BankAccounts;
 using BankingApp.API.Models.Loans;
 using BankingApp.API.Models.Pagination;
+using BankingApp.API.Models.Transactions;
 using BankingApp.API.Repositories.Interfaces;
 using BankingApp.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;

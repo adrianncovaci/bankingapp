@@ -51,7 +51,11 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         Customer
       </mat-header-cell>
-      <mat-cell *matCellDef="let el"> {{ el.customerName }} </mat-cell>
+      <mat-cell *matCellDef="let el"
+        ><a routerLink="/profile/{{ el.customerId }}">
+          {{ el.customerName }}
+        </a></mat-cell
+      >
     </ng-container>
 
     <ng-container matColumnDef="dateIssued">
@@ -63,7 +67,14 @@
 
     <ng-container matColumnDef="status">
       <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-      <mat-cell *matCellDef="let el"> {{ el.status }} </mat-cell>
+      <mat-cell *matCellDef="let el">
+        <ng-container *ngIf="el.status == 'Accepted'"
+          ><p style="color: green;">{{ el.status }}</p></ng-container
+        >
+        <ng-container *ngIf="el.status == 'Declined'"
+          ><p style="color: red;">{{ el.status }}</p></ng-container
+        >
+      </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="comments">

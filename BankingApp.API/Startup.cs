@@ -47,11 +47,12 @@ namespace BankingApp.API
         {
             services.AddDbContext<BankContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, Role>(options => {
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                })
+            services.AddIdentity<User, Role>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<BankContext>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
@@ -59,12 +60,14 @@ namespace BankingApp.API
                                                        );
             services.AddMvc(options => options.EnableEndpointRouting = false);
 
-            services.AddSwaggerGen(c => {
-                    c.SwaggerDoc("v1", new OpenApiInfo {
-                        Title = "Customers API",
-                        Version = "v1",
-                        Description = "API to manage Customers",
-                    });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Customers API",
+                    Version = "v1",
+                    Description = "API to manage Customers",
+                });
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -83,28 +86,32 @@ namespace BankingApp.API
 
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            services.AddAuthentication(x => {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x => {
-                        x.RequireHttpsMetadata = false;
-                        x.SaveToken = true;
-                        x.TokenValidationParameters = new TokenValidationParameters {
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(key),
-                            ValidateIssuer = false,
-                            ValidateAudience = false,
-                            ClockSkew = TimeSpan.Zero
-                        };
-                    });
-
-            services.AddAuthorization(options => {
-                    options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
-                    options.AddPolicy("LoanOfficerRole", policy => policy.RequireRole("Admin", "LoanOfficer"));
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
                 });
-            
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminRole", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("LoanOfficerRole", policy => policy.RequireRole("Admin", "LoanOfficer"));
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -113,15 +120,18 @@ namespace BankingApp.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            } else {
+            }
+            else
+            {
                 app.UseMiddleware<ErrorHandlingMiddleware>();
             }
 
             // app.UseWelcomePage();
 
             app.UseSwagger();
-            app.UseSwaggerUI( c=> {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer API V1");
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer API V1");
             });
 
             app.UseHttpsRedirection();
@@ -131,21 +141,6 @@ namespace BankingApp.API
             app.UseAuthentication();
 
             app.UseAuthorization();
-            
-            app.UseResponseCaching();
-            app.Use(async (context, next) =>
-            {
-                context.Response.GetTypedHeaders().CacheControl = 
-                    new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
-                    {
-                        Public = true,
-                        MaxAge = TimeSpan.FromSeconds(86400)
-                    };
-                context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] = 
-                    new string[] { "Accept-Encoding" };
-
-                await next();
-            });
 
             app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 

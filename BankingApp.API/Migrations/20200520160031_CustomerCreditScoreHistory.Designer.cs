@@ -4,14 +4,16 @@ using BankingApp.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankingApp.API.Migrations
 {
     [DbContext(typeof(BankContext))]
-    partial class BankContextModelSnapshot : ModelSnapshot
+    [Migration("20200520160031_CustomerCreditScoreHistory")]
+    partial class CustomerCreditScoreHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,13 +67,13 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 20, 19, 46, 33, 930, DateTimeKind.Local).AddTicks(4524));
+                        .HasDefaultValue(new DateTime(2020, 5, 20, 19, 0, 30, 541, DateTimeKind.Local).AddTicks(5639));
 
                     b.Property<decimal>("InitialDeposit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("LastDeposit")
                         .HasColumnType("datetime2");
@@ -112,7 +114,7 @@ namespace BankingApp.API.Migrations
                         .HasMaxLength(3);
 
                     b.Property<decimal?>("InitialInterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("MaintenanceFee")
                         .HasColumnType("decimal(18,2)");
@@ -224,9 +226,6 @@ namespace BankingApp.API.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DateIssued")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -245,7 +244,7 @@ namespace BankingApp.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("InterestRate")
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("LoanTypeId")
                         .HasColumnType("int");
@@ -503,7 +502,7 @@ namespace BankingApp.API.Migrations
                     b.Property<DateTime>("DateIssued")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 5, 20, 19, 46, 33, 980, DateTimeKind.Local).AddTicks(3181));
+                        .HasDefaultValue(new DateTime(2020, 5, 20, 19, 0, 30, 584, DateTimeKind.Local).AddTicks(5803));
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");

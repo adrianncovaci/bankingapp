@@ -16,49 +16,67 @@ import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
 import { OfficerPanelComponent } from './loan_officer/officer-panel/officer-panel.component';
 import { LoanTypeResolver } from './_resolvers/loan-type.resolver';
 import { HomepageComponent } from './homepage/homepage.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
 
 const routes: Routes = [
   { path: 'home', component: HomepageComponent },
   // { path: 'openaccount', component: BankaccountCreateComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: '',
+  {
+    path: '',
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      { 
-        path: '', component: HomeComponent, 
-        resolve: { bankAccounts: AccountListResolver, bankAccountTypes: AccountTypeResolver},
-        data: { roles: ['Customer'] }
-      },
-      { 
-        path: 'openaccount', component: BankaccountCreateComponent,
-        resolve: { bankAccountTypes: AccountTypeResolver }, data: { roles: ['Customer'] }
+      {
+        path: '',
+        component: HomeComponent,
+        resolve: {
+          bankAccounts: AccountListResolver,
+          bankAccountTypes: AccountTypeResolver,
+        },
+        data: { roles: ['Customer'] },
       },
       {
-        path: 'applyloan', component: LoanApplyComponent,  data: { roles: ['Customer'] }
+        path: 'openaccount',
+        component: BankaccountCreateComponent,
+        resolve: { bankAccountTypes: AccountTypeResolver },
+        data: { roles: ['Customer'] },
       },
       {
-        path: 'loanrequests', component: LoanRequestsListComponent, resolve: { loanRequests: LoanRequestsResolver },
-        data: { roles: ['Customer'] }
+        path: 'applyloan',
+        component: LoanApplyComponent,
+        data: { roles: ['Customer'] },
       },
       {
-        path: 'officer', component: OfficerPanelComponent, data: { roles: ['Admin', 'LoanOfficer'] }
+        path: 'loanrequests',
+        component: LoanRequestsListComponent,
+        resolve: { loanRequests: LoanRequestsResolver },
+        data: { roles: ['Customer'] },
       },
       {
-        path: ':id', component: BankaccountDetailComponent, data: { roles: ['Customer'] }
+        path: 'officer',
+        component: OfficerPanelComponent,
+        data: { roles: ['Admin', 'LoanOfficer'] },
       },
-      ]
+      {
+        path: 'profile/:id',
+        component: UserDetailComponent,
+        data: { roles: ['Customer', 'Admin', 'LoanOfficer'] },
+      },
+      {
+        path: ':id',
+        component: BankaccountDetailComponent,
+        data: { roles: ['Customer'] },
+      },
+    ],
   },
-  { path: '**', redirectTo: 'home', pathMatch: 'full' }
+  { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
-
 
 @NgModule({
   declarations: [],
-  imports: [
-    RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'}),
-  ],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

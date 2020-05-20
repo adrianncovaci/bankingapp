@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { LoginComponent } from './login/login.component';
@@ -35,6 +35,7 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
 import { BankaccountsService } from './_services/bankaccounts.service';
+import { CreditScoreHistoryComponent } from './credit-score-history/credit-score-history.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -56,7 +57,8 @@ export function tokenGetter() {
     OfficerPanelComponent,
     HasRolesDirective,
     HomepageComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    CreditScoreHistoryComponent,
   ],
   imports: [
     ReactiveFormsModule,
@@ -70,18 +72,18 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: ['localhost:5000'],
-        blacklistedRoutes: ['localhost:5000/customers']
-      }
-    })
+        blacklistedRoutes: ['localhost:5000/customers'],
+      },
+    }),
   ],
   providers: [
-      AuthService,
-      BankaccountsService,
-      AccountListResolver,
-      AccountTypeResolver,
-      LoanRequestsResolver,
-      LoanTypeResolver,
+    AuthService,
+    BankaccountsService,
+    AccountListResolver,
+    AccountTypeResolver,
+    LoanRequestsResolver,
+    LoanTypeResolver,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
