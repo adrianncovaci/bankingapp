@@ -21,6 +21,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [],
@@ -47,6 +49,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatRadioModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   exports: [
     MatToolbarModule,
@@ -70,6 +74,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatRadioModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
 })
 export class MaterialModule {}

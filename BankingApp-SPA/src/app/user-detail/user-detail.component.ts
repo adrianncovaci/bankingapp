@@ -31,7 +31,6 @@ export class UserDetailComponent implements OnInit {
   ) {
     this.subscribeId = this.route.params.subscribe((params) => {
       this.userId = +params['id'];
-      console.log(this.userId);
     });
     this.changePasswordForm = this.formBuilder.group({
       oldPassword: ['', [Validators.required]],
@@ -48,7 +47,6 @@ export class UserDetailComponent implements OnInit {
     this._service.getCustomer(this.userId).subscribe(
       (usr) => {
         this.user = usr;
-        console.log(this.user);
       },
       (error) => {
         this.alertify.error(error);

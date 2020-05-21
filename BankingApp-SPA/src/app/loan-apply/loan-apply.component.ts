@@ -87,7 +87,6 @@ export class LoanApplyComponent implements OnInit, AfterViewInit {
     this.loanService.getLoanTypes(request).subscribe(
       (loans: PagedResult<LoanType>) => {
         this.loanTypes = loans;
-        console.log(this.loanTypes);
         this.loanTypes.data.forEach((_) => {
           this.message.push(false);
         });
@@ -112,14 +111,12 @@ export class LoanApplyComponent implements OnInit, AfterViewInit {
           value: element,
         };
         arr.push(_filter);
-        console.log('ELEMENT ' + element);
       }
     });
     this.requestFilters = {
       logicalOperator: FilterOperators.Or,
       filters: arr,
     };
-    console.log(this.requestFilters.filters);
     this.getLoanTypes();
   }
 }

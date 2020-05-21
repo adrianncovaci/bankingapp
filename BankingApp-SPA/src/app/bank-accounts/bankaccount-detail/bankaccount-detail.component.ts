@@ -3,7 +3,12 @@ import { Bankaccount } from '../../_models/bankaccount';
 import { BankaccountsService } from '../../_services/bankaccounts.service';
 import { AlertifyService } from '../../_services/alertify.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 import { TransferService } from '../../_services/transfer.service';
 import { Transaction } from '../../_models/transaction';
 import { PagedResult } from 'src/app/_models/pagination/paged-result';
@@ -25,6 +30,10 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
   depositForm: FormGroup;
   withdrawForm: FormGroup;
   transferForm: FormGroup;
+  dateForm: FormGroup;
+  startDate = null;
+  endDate = null;
+
   bankAccount: Bankaccount;
   transactions: PagedResult<Transaction>;
   displayedColumns: string[] = [
@@ -48,7 +57,8 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
     private fbDeposit: FormBuilder,
     private fbWithdraw: FormBuilder,
     private fbTransfer: FormBuilder,
-    private router: Router
+    private router: Router,
+    private fbDate: FormBuilder
   ) {
     this.depositForm = this.fbDeposit.group({
       amount: [
@@ -82,6 +92,10 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
       receiver: ['', [Validators.required]],
       message: ['', [Validators.maxLength(256)]],
     });
+    this.dateForm = this.fbDate.group({
+      startDate: ['', [Validators.required]],
+      endDate: ['', [Validators.required]],
+    });
   }
 
   ngOnInit(): void {
@@ -109,11 +123,14 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
     return this.withdrawForm.controls;
   }
 
+  get dateFilterFormValue() {
+    return this.dateForm.controls;
+  }
+
   loadBankAccount() {
     this.bankAcc.getBankAccount(+this.route.snapshot.params['id']).subscribe(
       (acc) => {
         this.bankAccount = acc;
-        console.log(this.bankAccount);
       },
       (error) => {
         this.alertify.error(error);
@@ -127,7 +144,6 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
       this.requestFilters,
       this.sort
     );
-    console.log(request);
     this.transferService
       .getTransactionsByAccount(+this.route.snapshot.params['id'], request)
       .subscribe(
@@ -207,14 +223,18 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
           value: element,
         };
         arr.push(_filter);
-        console.log('ELEMENT ' + element);
       }
     });
     this.requestFilters = {
       logicalOperator: FilterOperators.Or,
       filters: arr,
     };
-    console.log(this.requestFilters.filters);
+    if (this.dateForm.get('startDate').value != '') {
+      this.requestFilters.startDate = this.dateForm.get('startDate').value;
+    }
+    if (this.dateForm.get('endDate').value != '') {
+      this.requestFilters.endDate = this.dateForm.get('endDate').value;
+    }
     this.getTransactionsByAccount();
   }
 }
