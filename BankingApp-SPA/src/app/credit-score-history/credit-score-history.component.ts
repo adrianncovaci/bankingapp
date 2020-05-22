@@ -17,7 +17,7 @@ export class CreditScoreHistoryComponent implements OnInit {
   scores: number[] = [];
   dates: Date[] = [];
 
-  linechart = [];
+  linechart;
   userId: number;
   currentUser: User;
   constructor(
@@ -36,36 +36,46 @@ export class CreditScoreHistoryComponent implements OnInit {
         this.scores.push(el.creditScore);
         this.dates.push(el.dateIssued);
       });
-      this.linechart = new Chart('canvas', {
-        type: 'line',
-        data: {
-          labels: this.dates,
-          datasets: [
+      this.initialize_chart();
+      console.log(this.linechart);
+      this.linechart.labels = this.dates;
+      this.linechart.datasets.foreach((el) => {
+        el.data = this.scores;
+      });
+    });
+  }
+
+  initialize_chart() {
+    this.linechart = new Chart('canvas', {
+      type: 'line',
+      data: {
+        labels: this.dates,
+        datasets: [
+          {
+            label: 'Credit Score',
+            data: this.scores,
+            borderColor: '#7b48d5',
+          },
+        ],
+      },
+      options: {
+        responsive: false,
+        legend: {
+          display: true,
+        },
+        scales: {
+          xAxes: [
             {
-              label: 'Credit Score',
-              data: this.scores,
-              borderColor: '#7b48d5',
+              display: false,
+            },
+          ],
+          yAxes: [
+            {
+              display: true,
             },
           ],
         },
-        options: {
-          legend: {
-            display: true,
-          },
-          scales: {
-            xAxes: [
-              {
-                display: true,
-              },
-            ],
-            yAxes: [
-              {
-                display: true,
-              },
-            ],
-          },
-        },
-      });
+      },
     });
   }
 }

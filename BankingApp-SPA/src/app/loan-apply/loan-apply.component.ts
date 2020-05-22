@@ -62,8 +62,10 @@ export class LoanApplyComponent implements OnInit, AfterViewInit {
     this.model = {
       ...this.applyForm.value,
     };
+    console.log(this.loanTypes);
     for (var i = 0; i < this.message.length; i++)
-      if (this.message[i] === true) this.model.loanId = this.loanTypes[i].id;
+      if (this.message[i] === true)
+        this.model.loanId = this.loanTypes.data[i].id;
 
     this.loanService.requestLoan(this.model).subscribe(
       () => {

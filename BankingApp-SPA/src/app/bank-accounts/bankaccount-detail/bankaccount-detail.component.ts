@@ -131,6 +131,12 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
     this.bankAcc.getBankAccount(+this.route.snapshot.params['id']).subscribe(
       (acc) => {
         this.bankAccount = acc;
+        if (this.bankAccount.period) {
+          this.bankAccount.monthlyPayment =
+            (this.bankAccount.balance / this.bankAccount.period) *
+            (1 + this.bankAccount.interestRate);
+        }
+        console.log(this.bankAccount);
       },
       (error) => {
         this.alertify.error(error);

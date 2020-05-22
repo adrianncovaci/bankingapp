@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -29,18 +30,21 @@ namespace BankingApp.API.Controllers
         [HttpPostAttribute("transactions/{id}")]
         public async Task<IActionResult> GetTransactionsByUser(int id, [FromBody] PagedRequest pagedRequest)
         {
-            var models = await _repo.GetPagedResponse<Transaction, TransactionModel>(pagedRequest);
-            models.Data = models.Data.Where(x => x.SenderAccountId == id).ToList();
-            if (pagedRequest.RequestFilters != null)
+            var bankAccount = await _repo.GetById<BankAccount>(id);
+            pagedRequest.RequestFilters = new RequestFilters
             {
-                if (pagedRequest.RequestFilters.StartDate != null)
-                {
-                    models.Data = models.Data.Where(x => x.DateIssued >= pagedRequest.RequestFilters.StartDate).ToList();
-                }
-                if (pagedRequest.RequestFilters.EndDate != null)
-                {
-                    models.Data = models.Data.Where(x => x.DateIssued <= pagedRequest.RequestFilters.EndDate).ToList();
-                }
+                FilterOperators = FilterOperators.And,
+                Filters = new List<Filter> { new Filter { Path = "senderaccount.accountnumber", Value = bankAccount.AccountNumber } }
+            };
+
+            var models = await _repo.GetPagedResponse<Transaction, TransactionModel>(pagedRequest);
+            if (pagedRequest.RequestFilters.StartDate != null)
+            {
+                models.Data = models.Data.Where(x => x.DateIssued <= pagedRequest.RequestFilters.StartDate).ToList();
+            }
+            if (pagedRequest.RequestFilters.EndDate != null)
+            {
+                models.Data = models.Data.Where(x => x.DateIssued <= pagedRequest.RequestFilters.EndDate).ToList();
             }
             return Ok(models);
         }

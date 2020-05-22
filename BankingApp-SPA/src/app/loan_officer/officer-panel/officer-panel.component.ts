@@ -131,6 +131,7 @@ export class OfficerPanelComponent implements AfterViewInit {
 
   createFilterFromForm() {
     if (this.filterForm.value) {
+      console.log(this.filterForm.value);
       const filters: Filter[] = [];
       Object.keys(this.filterForm.controls).forEach((key) => {
         const controlValue = this.filterForm.controls[key].value;

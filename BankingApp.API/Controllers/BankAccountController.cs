@@ -44,7 +44,6 @@ namespace BankingApp.API.Controllers
 
 
         [HttpGetAttribute("rates")]
-        [ResponseCache(Duration = 86400)]
         public async Task<IActionResult> GetExchangeRate()
         {
             var key = _exchangeRate.AccessKey;

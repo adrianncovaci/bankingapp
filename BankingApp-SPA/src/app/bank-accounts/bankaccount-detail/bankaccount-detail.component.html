@@ -11,6 +11,9 @@
           <p>Date Created: {{ bankAccount.dateCreated | date }}</p>
           <p>Interest Rate: {{ bankAccount.interestRate }}</p>
           <p>Maintenance Fee: {{ bankAccount.maintenanceFee }}</p>
+          <p *ngIf="bankAccount.monthlyPayment">
+            Monthly Payment: {{ bankAccount.monthlyPayment | number: ".2-2" }}
+          </p>
         </mat-card-content>
       </mat-card>
       <form style [formGroup]="depositForm" (ngSubmit)="deposit()">
@@ -48,6 +51,9 @@
           <p>Date Created: {{ bankAccount.dateCreated | date }}</p>
           <p>Interest Rate: {{ bankAccount.interestRate }}</p>
           <p>Maintenance Fee: {{ bankAccount.maintenanceFee }}</p>
+          <p *ngIf="bankAccount.monthlyPayment">
+            Monthly Payment: {{ bankAccount.monthlyPayment | number: ".2-2" }}
+          </p>
         </mat-card-content>
       </mat-card>
       <form [formGroup]="withdrawForm" (ngSubmit)="withdraw()">
@@ -86,6 +92,9 @@
           <p>Date Created: {{ bankAccount.dateCreated | date }}</p>
           <p>Interest Rate: {{ bankAccount.interestRate }}</p>
           <p>Maintenance Fee: {{ bankAccount.maintenanceFee }}</p>
+          <p *ngIf="bankAccount.monthlyPayment">
+            Monthly Payment: {{ bankAccount.monthlyPayment | number: ".2-2" }}
+          </p>
         </mat-card-content>
       </mat-card>
       <form [formGroup]="transferForm" (ngSubmit)="transfer()">

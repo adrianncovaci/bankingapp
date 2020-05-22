@@ -27,7 +27,7 @@ namespace BankingApp.API.Infrastructure.Extensions
                 {
                     predicate.Append($" {filters.FilterOperators} ");
                 }
-                predicate.Append(filters.Filters[i].Path + $".{nameof(string.Contains)}(@{i})");
+                predicate.Append(filters.Filters[i].Path + $".{nameof(string.Contains)}(@{i.ToString()})");
             }
 
             if (filters.Filters.Any())
