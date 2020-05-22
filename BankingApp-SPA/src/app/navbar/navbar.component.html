@@ -21,7 +21,7 @@
       >Loan Requests</a
     >
     <button mat-button [matMenuTriggerFor]="menu">
-      {{ authService.decodedToken.FirstName }}
+      {{ currentUser.firstName }} {{ currentUser.lastName }}
     </button>
     <mat-menu #menu="matMenu">
       <button

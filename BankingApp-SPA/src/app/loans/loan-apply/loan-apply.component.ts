@@ -1,17 +1,17 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { LoanService } from '../_services/loan.service';
-import { AlertifyService } from '../_services/alertify.service';
-import { LoanType } from '../_models/loan-type';
+import { LoanService } from '../../_services/loan.service';
+import { AlertifyService } from '../../_services/alertify.service';
+import { LoanType } from '../../_models/loan-type';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PagedResult } from '../_models/pagination/paged-result';
-import { RequestFilters } from '../_models/pagination/request-filters';
+import { PagedResult } from '../../_models/pagination/paged-result';
+import { RequestFilters } from '../../_models/pagination/request-filters';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { PaginatedRequest } from '../_models/pagination/paginated-request';
+import { PaginatedRequest } from '../../_models/pagination/paginated-request';
 import { merge } from 'rxjs';
-import { Filter } from '../_models/pagination/filter';
-import { FilterOperators } from '../_models/pagination/filter-operators';
+import { Filter } from '../../_models/pagination/filter';
+import { FilterOperators } from '../../_models/pagination/filter-operators';
 
 @Component({
   selector: 'app-loan-apply',
@@ -28,7 +28,7 @@ export class LoanApplyComponent implements OnInit, AfterViewInit {
 
   filterForms = { auto: true, mortgage: true, student: true };
 
-  requestFilters: RequestFilters;
+  requestFilters: RequestFilters[];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
@@ -115,10 +115,10 @@ export class LoanApplyComponent implements OnInit, AfterViewInit {
         arr.push(_filter);
       }
     });
-    this.requestFilters = {
+    this.requestFilters.push({
       logicalOperator: FilterOperators.Or,
       filters: arr,
-    };
+    });
     this.getLoanTypes();
   }
 }

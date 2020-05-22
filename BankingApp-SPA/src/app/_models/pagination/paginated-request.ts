@@ -5,13 +5,13 @@ import { MatSort } from '@angular/material/sort';
 export class PaginatedRequest {
   pageIndex: number;
   pageSize: number;
-  requestFilters: RequestFilters;
+  requestFilters: RequestFilters[];
   columnNameForSorting?: string;
   sortDirection?: string;
 
   constructor(
     paginator: MatPaginator,
-    filters: RequestFilters,
+    filters: RequestFilters[],
     sort?: MatSort
   ) {
     this.pageIndex = paginator.pageIndex;

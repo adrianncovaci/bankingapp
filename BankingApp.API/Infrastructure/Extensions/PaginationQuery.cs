@@ -21,19 +21,29 @@ namespace BankingApp.API.Infrastructure.Extensions
 
             if (filters == null) return query;
 
-            for (int i = 0; i < filters.Filters.Count; i++)
+            int index = 0;
+            foreach (var filter in filters)
             {
-                if (i > 0)
+                // predicate.Append("(");
+                for (int i = 0; i < filter.Filters.Count; i++)
                 {
-                    predicate.Append($" {filters.FilterOperators} ");
+                    if (i > 0)
+                    {
+                        predicate.Append($" {filter.FilterOperators} ");
+                    }
+                    predicate.Append(filter.Filters[i].Path + $".{nameof(string.Contains)}(@{i})");
                 }
-                predicate.Append(filters.Filters[i].Path + $".{nameof(string.Contains)}(@{i.ToString()})");
-            }
-
-            if (filters.Filters.Any())
-            {
-                var props = filters.Filters.Select(filter => filter.Value).ToArray();
-                query = query.Where(predicate.ToString(), props);
+                if (filter.Filters.Any())
+                {
+                    var props = filter.Filters.Select(filter => filter.Value).ToArray();
+                    query = query.Where(predicate.ToString(), props);
+                }
+                // index++;
+                // if (index < filters.Count)
+                //     predicate.Append(") AND ");
+                // else
+                //     predicate.Append(")");
+                predicate = new StringBuilder();
             }
             return query;
         }

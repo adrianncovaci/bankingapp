@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { User } from '../_models/user';
-import { AuthService } from '../_services/auth.service';
+import { User } from '../../_models/user';
+import { AuthService } from '../../_services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { AlertifyService } from '../_services/alertify.service';
+import { AlertifyService } from '../../_services/alertify.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 export interface ChangePassword {
@@ -27,7 +27,7 @@ export class UserDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private alertify: AlertifyService,
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    public authService: AuthService
   ) {
     this.subscribeId = this.route.params.subscribe((params) => {
       this.userId = +params['id'];
@@ -47,11 +47,13 @@ export class UserDetailComponent implements OnInit {
     this._service.getCustomer(this.userId).subscribe(
       (usr) => {
         this.user = usr;
+        console.log(this.user);
       },
       (error) => {
         this.alertify.error(error);
       }
     );
+    console.log('NAME: ', this.authService.decodedToken);
   }
 
   changePassword() {

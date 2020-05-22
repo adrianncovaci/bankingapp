@@ -2,21 +2,21 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './customers/login/login.component';
+import { RegisterComponent } from './customers/register/register.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { BankaccountListComponent } from './bank-accounts/bankaccount-list/bankaccount-list.component';
 import { AccountListResolver } from './_resolvers/account-list.resolver';
 import { AccountTypeResolver } from './_resolvers/account-type.resolver';
 import { BankaccountCreateComponent } from './bank-accounts/bankaccount-create/bankaccount-create.component';
 import { BankaccountDetailComponent } from './bank-accounts/bankaccount-detail/bankaccount-detail.component';
-import { LoanApplyComponent } from './loan-apply/loan-apply.component';
-import { LoanRequestsListComponent } from './loan-requests-list/loan-requests-list.component';
+import { LoanApplyComponent } from './loans/loan-apply/loan-apply.component';
+import { LoanRequestsListComponent } from './loans/loan-requests-list/loan-requests-list.component';
 import { LoanRequestsResolver } from './_resolvers/loan-requests.resolver';
-import { OfficerPanelComponent } from './loan_officer/officer-panel/officer-panel.component';
+import { OfficerPanelComponent } from './loan-officers/officer-panel/officer-panel.component';
 import { LoanTypeResolver } from './_resolvers/loan-type.resolver';
 import { HomepageComponent } from './homepage/homepage.component';
-import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserDetailComponent } from './customers/user-detail/user-detail.component';
 
 const routes: Routes = [
   { path: 'home', component: HomepageComponent },

@@ -45,7 +45,7 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
   ];
   filterProperties = { deposit: true, withdrawal: true, transfer: true };
 
-  requestFilters: RequestFilters;
+  requestFilters: RequestFilters[] = [];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
@@ -136,7 +136,6 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
             (this.bankAccount.balance / this.bankAccount.period) *
             (1 + this.bankAccount.interestRate);
         }
-        console.log(this.bankAccount);
       },
       (error) => {
         this.alertify.error(error);
@@ -222,6 +221,7 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
   }
   applyFilters() {
     let arr: Filter[] = [];
+    this.requestFilters = [];
     Object.keys(this.filterProperties).forEach((element) => {
       if (this.filterProperties[element] === true) {
         const _filter: Filter = {
@@ -231,16 +231,22 @@ export class BankaccountDetailComponent implements OnInit, AfterViewInit {
         arr.push(_filter);
       }
     });
-    this.requestFilters = {
-      logicalOperator: FilterOperators.Or,
-      filters: arr,
-    };
+    console.log(arr);
+    let startDate = null;
+    let endDate = null;
     if (this.dateForm.get('startDate').value != '') {
-      this.requestFilters.startDate = this.dateForm.get('startDate').value;
+      startDate = this.dateForm.get('startDate').value;
     }
     if (this.dateForm.get('endDate').value != '') {
-      this.requestFilters.endDate = this.dateForm.get('endDate').value;
+      endDate = this.dateForm.get('endDate').value;
     }
+    let newReqFilter: RequestFilters = {
+      logicalOperator: FilterOperators.Or,
+      filters: arr,
+      startDate: startDate,
+      endDate: endDate,
+    };
+    this.requestFilters.push(newReqFilter);
     this.getTransactionsByAccount();
   }
 }

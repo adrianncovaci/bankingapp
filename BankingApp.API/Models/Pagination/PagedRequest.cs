@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+
 namespace BankingApp.API.Models.Pagination
 {
     public class PagedRequest
     {
-        public PagedRequest(RequestFilters filters)
+        public PagedRequest(List<RequestFilters> filters)
         {
             RequestFilters = filters;
         }
@@ -11,6 +13,6 @@ namespace BankingApp.API.Models.Pagination
         public int PageSize { get; set; }
         public string ColumnNameForSorting { get; set; }
         public string SortDirection { get; set; }
-        public RequestFilters RequestFilters { get; set; }
+        public List<RequestFilters> RequestFilters { get; set; }
     }
 }

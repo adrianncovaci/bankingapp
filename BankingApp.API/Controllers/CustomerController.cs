@@ -59,7 +59,9 @@ namespace BankingApp.API.Controllers
                 Subject = new ClaimsIdentity(new List<Claim> {
                         new Claim(ClaimTypes.Name, user.Id.ToString()),
                         new Claim("FirstName", user.FirstName),
+                        new Claim("LastName", user.LastName.ToString()),
                         new Claim("RegisteredDate", user.RegisteredDate.ToString()),
+                        new Claim("Id", user.Id.ToString()),
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),
             };

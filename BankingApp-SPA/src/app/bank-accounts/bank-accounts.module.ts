@@ -7,8 +7,8 @@ import { BankaccountListComponent } from './bankaccount-list/bankaccount-list.co
 import { MaterialModule } from '../material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from '../app-routing.module';
-
-
+import { TransferComponent } from './transfer/transfer.component';
+import { TransactionListComponent } from './transaction-list/transaction-list.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +16,8 @@ import { AppRoutingModule } from '../app-routing.module';
     BankaccountCreateComponent,
     BankaccountDetailComponent,
     BankaccountListComponent,
+    TransactionListComponent,
+    TransferComponent,
   ],
   imports: [
     CommonModule,
@@ -23,13 +25,14 @@ import { AppRoutingModule } from '../app-routing.module';
     ReactiveFormsModule,
     AppRoutingModule,
   ],
-  providers: [
-  ],
+  providers: [],
   exports: [
     BankaccountCardComponent,
     BankaccountCreateComponent,
     BankaccountDetailComponent,
     BankaccountListComponent,
-  ]
+    TransactionListComponent,
+    TransferComponent,
+  ],
 })
-export class BankAccountsModule { }
+export class BankAccountsModule {}

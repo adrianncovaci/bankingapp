@@ -21,7 +21,7 @@
     </div>
   </mat-grid-tile>
 
-  <mat-grid-tile>
+  <mat-grid-tile *ngIf="user.userId == this.authService.decodedToken.Id">
     <mat-card>
       <mat-card-header>
         Change Password

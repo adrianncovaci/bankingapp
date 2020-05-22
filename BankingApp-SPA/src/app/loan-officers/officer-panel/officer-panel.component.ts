@@ -59,7 +59,7 @@ export class OfficerPanelComponent implements AfterViewInit {
   displayedColumns: string[];
   loanRequests: LoanRequest[];
   loanTypes: LoanType[];
-  requestFilters: RequestFilters;
+  requestFilters: RequestFilters[] = [];
   searchInput = new FormControl('');
   filterForm: FormGroup;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -87,35 +87,11 @@ export class OfficerPanelComponent implements AfterViewInit {
     });
   }
 
-  applySearch() {
-    this.createFiltersFromSearchInput();
-    this.loadLoans();
-  }
-
   filterFromForm() {
+    this.requestFilters = [];
     this.createFilterFromForm();
     this.loadLoans();
   }
-
-  createFiltersFromSearchInput() {
-    const val = this.searchInput.value.trim();
-    if (val) {
-      const filters: Filter[] = [];
-      this.tableColumns.forEach((col) => {
-        if (col.useInSearch) {
-          const filter: Filter = { path: col.index, value: val };
-          filters.push(filter);
-        }
-      });
-      this.requestFilters = {
-        logicalOperator: FilterOperators.Or,
-        filters,
-      };
-    } else {
-      this.resetGrid();
-    }
-  }
-
   loadLoans() {
     const request = new PaginatedRequest(
       this.paginator,
@@ -147,15 +123,17 @@ export class OfficerPanelComponent implements AfterViewInit {
         }
       });
 
-      this.requestFilters = {
+      this.requestFilters.push({
         logicalOperator: FilterOperators.And,
         filters,
-      };
+      });
     }
   }
 
   resetGrid() {
-    this.requestFilters = { filters: [], logicalOperator: FilterOperators.And };
+    this.requestFilters = [
+      { filters: [], logicalOperator: FilterOperators.And },
+    ];
     this.loadLoans();
   }
 

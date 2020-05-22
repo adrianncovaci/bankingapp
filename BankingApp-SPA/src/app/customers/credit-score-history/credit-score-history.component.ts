@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AuthService } from '../_services/auth.service';
-import { CreditScoreData } from '../_models/credit-score-data';
+import { AuthService } from '../../_services/auth.service';
+import { CreditScoreData } from '../../_models/credit-score-data';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Chart } from 'chart.js';
-import { AlertifyService } from '../_services/alertify.service';
-import { User } from '../_models/user';
+import { AlertifyService } from '../../_services/alertify.service';
+import { User } from '../../_models/user';
 
 @Component({
   selector: 'app-credit-score-history',
